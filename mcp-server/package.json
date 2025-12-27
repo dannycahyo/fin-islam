@@ -1,0 +1,24 @@
+{
+  "name": "mcp-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP server for Islamic Finance profit-sharing calculations",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext ts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf node_modules dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "typescript": "^5.7.2",
+    "tsx": "^4.19.2"
+  }
+}
