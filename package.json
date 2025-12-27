@@ -1,0 +1,42 @@
+{
+  "name": "islamic-finance-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-powered Islamic Finance Knowledge Assistant",
+  "author": "Danny - AI Engineer",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "scripts": {
+    "setup": "pnpm install && pnpm db:setup && pnpm ollama:pull",
+    "dev": "concurrently -n \"backend,frontend,mcp\" -c \"bgBlue,bgGreen,bgMagenta\" \"pnpm dev:backend\" \"pnpm dev:frontend\" \"pnpm dev:mcp\"",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:mcp": "pnpm --filter mcp-server dev",
+    "build": "pnpm build:backend && pnpm build:frontend",
+    "build:frontend": "pnpm --filter frontend build",
+    "build:backend": "pnpm --filter backend build",
+    "build:mcp": "pnpm --filter mcp-server build",
+    "db:setup": "pnpm --filter backend db:generate && pnpm --filter backend db:migrate",
+    "db:generate": "pnpm --filter backend db:generate",
+    "db:migrate": "pnpm --filter backend db:migrate",
+    "db:studio": "pnpm --filter backend db:studio",
+    "ollama:pull": "ollama pull llama3.1:8b && ollama pull nomic-embed-text",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "typecheck": "pnpm -r typecheck",
+    "clean": "pnpm -r clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "concurrently": "^8.2.2",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1"
+  }
+}
