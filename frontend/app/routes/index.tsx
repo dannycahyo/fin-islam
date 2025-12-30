@@ -16,12 +16,9 @@ export default function ChatPage() {
                 {/* Welcome message */}
                 <div className="flex justify-center">
                   <div className="rounded-lg bg-muted px-4 py-3 text-center text-sm text-muted-foreground">
-                    <p className="font-medium">
-                      Welcome to Islamic Finance Assistant
-                    </p>
+                    <p className="font-medium">Welcome to Islamic Finance Assistant</p>
                     <p className="mt-1">
-                      Ask me anything about Islamic finance principles and
-                      products
+                      Ask me anything about Islamic finance principles and products
                     </p>
                   </div>
                 </div>
