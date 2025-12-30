@@ -1,0 +1,3 @@
+PLACEHOLDER: User will provide actual >10MB file manually for testing file size validation.
+
+This placeholder file is used to mark the location where the actual large file should be placed for testing purposes.
