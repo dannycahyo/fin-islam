@@ -12,153 +12,21 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import { useToast } from '~/hooks/use-toast';
-
-type Category = 'principle' | 'product' | 'comparison' | 'general';
-
-const ALLOWED_FILE_TYPES = [
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'text/plain',
-  'text/markdown',
-];
-
-const FILE_EXTENSIONS = ['.pdf', '.docx', '.txt', '.md'];
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const MAX_TITLE_LENGTH = 500;
-const MAX_DESCRIPTION_LENGTH = 1000;
-
-interface FormState {
-  file: File | null;
-  title: string;
-  category: Category | '';
-  description: string;
-  errors: {
-    file?: string;
-    title?: string;
-    category?: string;
-    description?: string;
-  };
-}
-
-type FormAction =
-  | { type: 'SET_FILE'; payload: File | null }
-  | { type: 'SET_TITLE'; payload: string }
-  | { type: 'SET_CATEGORY'; payload: Category | '' }
-  | { type: 'SET_DESCRIPTION'; payload: string }
-  | { type: 'SET_ERROR'; field: keyof FormState['errors']; message: string }
-  | { type: 'CLEAR_ERROR'; field: keyof FormState['errors'] }
-  | { type: 'RESET_FORM' };
-
-const initialState: FormState = {
-  file: null,
-  title: '',
-  category: '',
-  description: '',
-  errors: {},
-};
-
-function formReducer(state: FormState, action: FormAction): FormState {
-  switch (action.type) {
-    case 'SET_FILE':
-      return { ...state, file: action.payload };
-    case 'SET_TITLE':
-      return { ...state, title: action.payload };
-    case 'SET_CATEGORY':
-      return { ...state, category: action.payload };
-    case 'SET_DESCRIPTION':
-      return { ...state, description: action.payload };
-    case 'SET_ERROR':
-      return {
-        ...state,
-        errors: { ...state.errors, [action.field]: action.message },
-      };
-    case 'CLEAR_ERROR':
-      // eslint-disable-next-line no-case-declarations, @typescript-eslint/no-unused-vars
-      const { [action.field]: _, ...remainingErrors } = state.errors;
-      return { ...state, errors: remainingErrors };
-    case 'RESET_FORM':
-      return initialState;
-    default:
-      return state;
-  }
-}
+import {
+  Category,
+  formReducer,
+  initialFormState,
+  validateFile,
+  validateForm,
+} from '~/reducer/documentUploadFormReducer';
+import { FILE_EXTENSIONS, MAX_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH } from '~/constants/document';
 
 export function DocumentUploadForm() {
-  const [state, dispatch] = useReducer(formReducer, initialState);
+  const [state, dispatch] = useReducer(formReducer, initialFormState);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-
-  const validateFile = (file: File): string | null => {
-    // Check file type
-    const hasValidType = ALLOWED_FILE_TYPES.includes(file.type);
-    const hasValidExtension = FILE_EXTENSIONS.some((ext) => file.name.toLowerCase().endsWith(ext));
-
-    if (!hasValidType && !hasValidExtension) {
-      return 'Invalid file type. Only PDF, DOCX, TXT, and MD files are allowed.';
-    }
-
-    // Check file size
-    if (file.size > MAX_FILE_SIZE) {
-      return 'File size exceeds 10MB limit.';
-    }
-
-    return null;
-  };
-
-  const validateForm = (): boolean => {
-    let isValid = true;
-
-    // Validate file
-    if (!state.file) {
-      dispatch({
-        type: 'SET_ERROR',
-        field: 'file',
-        message: 'Please select a file.',
-      });
-      isValid = false;
-    }
-
-    // Validate title
-    if (!state.title.trim()) {
-      dispatch({
-        type: 'SET_ERROR',
-        field: 'title',
-        message: 'Title is required.',
-      });
-      isValid = false;
-    } else if (state.title.length > MAX_TITLE_LENGTH) {
-      dispatch({
-        type: 'SET_ERROR',
-        field: 'title',
-        message: `Title must be ${MAX_TITLE_LENGTH} characters or less.`,
-      });
-      isValid = false;
-    }
-
-    // Validate category
-    if (!state.category) {
-      dispatch({
-        type: 'SET_ERROR',
-        field: 'category',
-        message: 'Category is required.',
-      });
-      isValid = false;
-    }
-
-    // Validate description
-    if (state.description.length > MAX_DESCRIPTION_LENGTH) {
-      dispatch({
-        type: 'SET_ERROR',
-        field: 'description',
-        message: `Description must be ${MAX_DESCRIPTION_LENGTH} characters or less.`,
-      });
-      isValid = false;
-    }
-
-    return isValid;
-  };
 
   const handleFileSelect = (file: File) => {
     const error = validateFile(file);
@@ -232,7 +100,15 @@ export function DocumentUploadForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    const validation = validateForm(state);
+    if (!validation.isValid) {
+      validation.errors.forEach((error) => {
+        dispatch({
+          type: 'SET_ERROR',
+          field: error.field,
+          message: error.message,
+        });
+      });
       return;
     }
 

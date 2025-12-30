@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { FileText } from 'lucide-react';
-import { DocumentUploadForm } from '@/components/document-upload-form';
+import { DocumentUploadForm } from '~/components/document-upload-form';
 
 export default function AdminPage() {
   return (
