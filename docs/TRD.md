@@ -38,18 +38,18 @@ This document defines the technical architecture, implementation details, and in
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    CLIENT LAYER                              │
+│                   CLIENT LAYER                              │
 │  ┌────────────────────────────────────────────────────────┐ │
-│  │  Next.js Frontend (React Router v7 + Tailwind)        │ │
-│  │  - Chat Interface (XState for state management)       │ │
-│  │  - Admin Dashboard (shadcn/ui components)             │ │
-│  │  - SSE Client (streaming responses)                   │ │
+│  │           Frontend (React Router v7 + Tailwind)        │ │
+│  │   - Chat Interface (XState for state management)       │ │
+│  │   - Admin Dashboard (shadcn/ui components)             │ │
+│  │   - SSE Client (streaming responses)                   │ │
 │  └────────────────────────────────────────────────────────┘ │
 └───────────────────────────┬─────────────────────────────────┘
                             │ HTTP/SSE
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   API LAYER                                  │
+│                  API LAYER                                  │
 │  ┌────────────────────────────────────────────────────────┐ │
 │  │  Hono.js Backend (TypeScript)                          │ │
 │  │  - REST API endpoints                                  │ │
@@ -57,7 +57,7 @@ This document defines the technical architecture, implementation details, and in
 │  │  - File upload handling                                │ │
 │  │  - Agent orchestration                                 │ │
 │  └────────────────────────────────────────────────────────┘ │
-└───┬──────────────┬──────────────┬──────────────┬───────────┘
+└───┬──────────────┬──────────────┬──────────────┬────────────┘
     │              │              │              │
     ▼              ▼              ▼              ▼
 ┌─────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────┐
