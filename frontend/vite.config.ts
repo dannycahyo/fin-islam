@@ -7,19 +7,20 @@ export default defineConfig({
   resolve: {
     alias: {
       '~': resolve(__dirname, './app'),
-    },
+      '@': resolve(__dirname, './app')
+    }
   },
   server: {
     port: 3000,
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
-        changeOrigin: true,
-      },
-    },
+        changeOrigin: true
+      }
+    }
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
-  },
+    sourcemap: true
+  }
 });
