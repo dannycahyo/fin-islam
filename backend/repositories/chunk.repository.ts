@@ -1,6 +1,6 @@
 import { eq, and, sql } from 'drizzle-orm';
-import { db } from '../db/config';
-import { documentChunks, documents, type DocumentChunk, type NewDocumentChunk } from '../db/schema';
+import { db } from '@/db/config';
+import { documentChunks, documents, type DocumentChunk, type NewDocumentChunk } from '@/db/schema';
 
 export interface SearchOptions {
   limit: number;

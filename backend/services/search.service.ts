@@ -20,10 +20,7 @@ export class SearchService {
   async search(params: SearchQuery): Promise<SearchResult[]> {
     const { query, limit = 10, threshold = 0.7, filters } = params;
 
-    // Generate embedding for query
     const queryEmbedding = await this.embedder.embedSingle(query);
-
-    // Perform vector search
     const results = await this.chunkRepo.vectorSearch(queryEmbedding, {
       limit,
       threshold,

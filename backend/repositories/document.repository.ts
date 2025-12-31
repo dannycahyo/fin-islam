@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { db } from '../db/config';
-import { documents, type Document, type NewDocument } from '../db/schema';
+import { db } from '@/db/config';
+import { documents, type Document, type NewDocument } from '@/db/schema';
 
 export class DocumentRepository {
   async create(data: NewDocument): Promise<Document> {

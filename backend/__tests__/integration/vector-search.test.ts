@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { db } from '../../db/config';
-import { documents, documentChunks } from '../../db/schema';
-import { DocumentRepository } from '../../repositories/document.repository';
-import { ChunkRepository } from '../../repositories/chunk.repository';
-import { EmbeddingService } from '../../services/embedding-service';
+import { db } from '@/db/config';
+import { documents, documentChunks } from '@/db/schema';
+import { DocumentRepository } from '@/repositories/document.repository';
+import { ChunkRepository } from '@/repositories/chunk.repository';
+import { EmbeddingService } from '@/services/embedding-service';
 
 describe('Vector Search Integration Tests', () => {
   let documentRepo: DocumentRepository;

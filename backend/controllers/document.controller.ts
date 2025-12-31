@@ -1,6 +1,6 @@
 import { Context } from 'hono';
 import { writeFile } from 'node:fs/promises';
-import { DocumentService } from '../services/document.service';
+import { DocumentService } from '@/services/document.service';
 
 export class DocumentController {
   constructor(private documentService: DocumentService) {}

@@ -39,17 +39,12 @@ export class DocumentService {
   }
 
   async processDocument(documentId: string, filePath: string): Promise<void> {
-    // Process file
     const processed = await this.processor.processFile(filePath);
-
-    // Chunk document
     const chunked = await this.chunker.chunkDocument(processed, filePath);
 
-    // Generate embeddings
     const texts = chunked.chunks.map((chunk) => chunk.content);
     const embeddings = await this.embedder.embedBatch(texts);
 
-    // Prepare chunks for insertion
     const chunks: NewDocumentChunk[] = chunked.chunks.map((chunk, index) => ({
       documentId,
       content: chunk.content,
@@ -57,10 +52,7 @@ export class DocumentService {
       embedding: embeddings[index],
     }));
 
-    // Insert chunks with embeddings
     await this.chunkRepo.insertBatch(chunks);
-
-    // Update document status
     await this.documentRepo.update(documentId, { status: 'indexed' });
   }
 }

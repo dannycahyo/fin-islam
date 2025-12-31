@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import { SearchService } from '../services/search.service';
+import { SearchService } from '@/services/search.service';
 
 interface SearchRequest {
   query: string;
