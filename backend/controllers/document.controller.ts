@@ -1,6 +1,12 @@
 import { Context } from 'hono';
+import { z } from 'zod';
 import { writeFile } from 'node:fs/promises';
 import { DocumentService } from '@/services/document.service';
+import {
+  DocumentUploadFieldsSchema,
+  DocumentParamSchema,
+  ListDocumentsQuerySchema,
+} from '@/schemas';
 
 export class DocumentController {
   constructor(private documentService: DocumentService) {}
@@ -13,26 +19,58 @@ export class DocumentController {
       const category = body.category as string;
       const description = body.description as string | undefined;
 
-      if (!file || !title || !category) {
-        return c.json({ error: 'Missing required fields: file, title, category' }, 400);
+      const validatedFields = DocumentUploadFieldsSchema.parse({
+        title,
+        category,
+        description,
+      });
+
+      if (!file) {
+        return c.json(
+          {
+            error: 'Validation failed',
+            message: 'file: File is required',
+          },
+          400
+        );
       }
 
-      // Save file temporarily and process
-      const tempPath = `/tmp/${file.name}`;
+      const allowedExtensions = ['pdf', 'docx', 'txt', 'md'];
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+
+      if (!fileExt || !allowedExtensions.includes(fileExt)) {
+        return c.json(
+          {
+            error: 'Validation failed',
+            message: `file: File type must be one of: ${allowedExtensions.join(', ')}`,
+          },
+          400
+        );
+      }
+
       const arrayBuffer = await file.arrayBuffer();
+      if (arrayBuffer.byteLength === 0) {
+        return c.json(
+          {
+            error: 'Validation failed',
+            message: 'file: File must not be empty',
+          },
+          400
+        );
+      }
+
+      const tempPath = `/tmp/${file.name}`;
       await writeFile(tempPath, Buffer.from(arrayBuffer));
 
-      // Create document record
       const document = await this.documentService.createDocument({
-        title,
-        description,
-        category,
+        title: validatedFields.title,
+        description: validatedFields.description,
+        category: validatedFields.category,
         filePath: tempPath,
-        fileType: file.name.split('.').pop() || 'unknown',
+        fileType: fileExt,
         status: 'processing',
       });
 
-      // Process document in background
       this.documentService.processDocument(document.id, tempPath).catch(async (error) => {
         console.error('Document processing failed:', error);
         await this.documentService.updateDocumentStatus(document.id, 'failed');
@@ -48,6 +86,19 @@ export class DocumentController {
         202
       );
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return c.json(
+          {
+            error: 'Validation failed',
+            details: error.errors.map((e) => ({
+              field: e.path.join('.'),
+              message: e.message,
+            })),
+          },
+          400
+        );
+      }
+
       console.error('Upload error:', error);
       return c.json({ error: 'Failed to upload document' }, 500);
     }
@@ -55,7 +106,7 @@ export class DocumentController {
 
   async getDocument(c: Context) {
     try {
-      const id = c.req.param('id');
+      const { id } = DocumentParamSchema.parse({ id: c.req.param('id') });
       const document = await this.documentService.getDocumentById(id);
 
       if (!document) {
@@ -64,6 +115,19 @@ export class DocumentController {
 
       return c.json(document);
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return c.json(
+          {
+            error: 'Validation failed',
+            details: error.errors.map((e) => ({
+              field: e.path.join('.'),
+              message: e.message,
+            })),
+          },
+          400
+        );
+      }
+
       console.error('Get document error:', error);
       return c.json({ error: 'Failed to retrieve document' }, 500);
     }
@@ -71,11 +135,26 @@ export class DocumentController {
 
   async listDocuments(c: Context) {
     try {
-      const category = c.req.query('category');
+      const { category } = ListDocumentsQuerySchema.parse({
+        category: c.req.query('category'),
+      });
       const documents = await this.documentService.listDocuments(category);
 
       return c.json({ documents, total: documents.length });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return c.json(
+          {
+            error: 'Validation failed',
+            details: error.errors.map((e) => ({
+              field: e.path.join('.'),
+              message: e.message,
+            })),
+          },
+          400
+        );
+      }
+
       console.error('List documents error:', error);
       return c.json({ error: 'Failed to list documents' }, 500);
     }
@@ -83,7 +162,7 @@ export class DocumentController {
 
   async deleteDocument(c: Context) {
     try {
-      const id = c.req.param('id');
+      const { id } = DocumentParamSchema.parse({ id: c.req.param('id') });
       const document = await this.documentService.getDocumentById(id);
 
       if (!document) {
@@ -94,6 +173,19 @@ export class DocumentController {
 
       return c.json({ message: 'Document deleted successfully' });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return c.json(
+          {
+            error: 'Validation failed',
+            details: error.errors.map((e) => ({
+              field: e.path.join('.'),
+              message: e.message,
+            })),
+          },
+          400
+        );
+      }
+
       console.error('Delete document error:', error);
       return c.json({ error: 'Failed to delete document' }, 500);
     }

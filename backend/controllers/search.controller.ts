@@ -1,52 +1,39 @@
 import { Context } from 'hono';
+import { z } from 'zod';
 import { SearchService } from '@/services/search.service';
-
-interface SearchRequest {
-  query: string;
-  limit?: number;
-  threshold?: number;
-  filters?: {
-    category?: string;
-    documentId?: string;
-  };
-}
+import { SearchInputSchema } from '@/schemas';
 
 export class SearchController {
   constructor(private searchService: SearchService) {}
 
   async search(c: Context) {
     try {
-      const body = await c.req.json<SearchRequest>();
-      const { query, limit = 10, threshold = 0.7, filters } = body;
+      const body = await c.req.json();
+      const validatedInput = SearchInputSchema.parse(body);
 
-      if (!query || typeof query !== 'string' || query.trim().length === 0) {
-        return c.json({ error: 'Query is required and must be a non-empty string' }, 400);
-      }
-
-      if (limit < 1 || limit > 100) {
-        return c.json({ error: 'Limit must be between 1 and 100' }, 400);
-      }
-
-      if (threshold < 0 || threshold > 1) {
-        return c.json({ error: 'Threshold must be between 0 and 1' }, 400);
-      }
-
-      // Perform search via service
-      const results = await this.searchService.search({
-        query,
-        limit,
-        threshold,
-        filters,
-      });
+      const results = await this.searchService.search(validatedInput);
 
       return c.json({
-        query,
+        query: validatedInput.query,
         results,
         total: results.length,
-        limit,
-        threshold,
+        limit: validatedInput.limit,
+        threshold: validatedInput.threshold,
       });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return c.json(
+          {
+            error: 'Validation failed',
+            details: error.errors.map((e) => ({
+              field: e.path.join('.') || 'root',
+              message: e.message,
+            })),
+          },
+          400
+        );
+      }
+
       console.error('Search error:', error);
 
       if (error instanceof Error && error.name === 'EmbeddingServiceError') {
