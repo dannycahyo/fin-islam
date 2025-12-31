@@ -24,4 +24,4 @@ Murabaha (Cost-Plus Financing)
 Murabaha is a sale contract where the seller discloses the cost and profit margin to the buyer. The financial institution purchases an asset and sells it to the client at a marked-up price. The payment can be made in installments. This is one of the most commonly used Islamic financing methods.
 
 Mudarabah (Profit-Sharing Partnership)
-In a Mudarabah contract, one party provides capital while the other provides expertise and management. Profits are shared according to a 
+In a Mudarabah contract, one party provides capital while the other provides expertise and management. Profits are shared according to a predetermined ratio, while losses are borne by the capital provider unless there is negligence or misconduct by the managing party.
