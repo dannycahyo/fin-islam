@@ -45,7 +45,8 @@ describe('DocumentProcessor', () => {
         numpages: 1,
         info: {},
         metadata: null,
-        version: '1.0',
+        version: 'v1.10.100',
+        numrender: 1,
       });
 
       const result = await processor.processPDF('/path/to/test.pdf');
@@ -69,7 +70,8 @@ describe('DocumentProcessor', () => {
         numpages: 1,
         info: {},
         metadata: null,
-        version: '1.0',
+        version: 'v1.10.100',
+        numrender: 1,
       });
 
       await expect(processor.processPDF('/path/to/empty.pdf')).rejects.toThrow(
@@ -116,7 +118,8 @@ describe('DocumentProcessor', () => {
         numpages: 1,
         info: {},
         metadata: null,
-        version: '1.0',
+        version: 'v1.10.100',
+        numrender: 1,
       });
 
       const result = await processor.processPDF('/path/to/test.pdf');
@@ -270,7 +273,8 @@ describe('DocumentProcessor', () => {
         numpages: 1,
         info: {},
         metadata: null,
-        version: '1.0',
+        version: 'v1.10.100',
+        numrender: 1,
       });
 
       await processor.processFile('/path/to/document.pdf');
@@ -330,7 +334,8 @@ describe('DocumentProcessor', () => {
             numpages: 1,
             info: {},
             metadata: null,
-            version: '1.0',
+            version: 'v1.10.100',
+            numrender: 1,
           });
         } else if (ext === '.docx') {
           vi.mocked(mammoth.extractRawText).mockResolvedValue({
@@ -433,7 +438,8 @@ describe('DocumentProcessor', () => {
         numpages: 10,
         info: {},
         metadata: null,
-        version: '1.0',
+        version: 'v1.10.100',
+        numrender: 1,
       });
 
       const result = await processor.processPDF('/path/to/test.pdf');
