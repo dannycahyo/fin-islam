@@ -4,7 +4,7 @@ import {
   MAX_FILE_SIZE,
   MAX_TITLE_LENGTH,
   MAX_DESCRIPTION_LENGTH,
-} from '../../../constants/document';
+} from '~/constants/document';
 
 // Types
 export type Category = 'principle' | 'product' | 'comparison' | 'general';
