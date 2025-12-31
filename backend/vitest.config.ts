@@ -9,6 +9,7 @@ export default mergeConfig(
       root: __dirname,
       environment: 'node',
       setupFiles: ['__tests__/setup.ts'],
+      fileParallelism: false,
       coverage: {
         include: ['services/**', 'lib/**', 'routes/**'],
         exclude: ['**/__tests__/**', '**/__mocks__/**'],

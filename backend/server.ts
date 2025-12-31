@@ -5,6 +5,7 @@ import { serve } from '@hono/node-server';
 import * as dotenv from 'dotenv';
 import { db } from './db/config';
 import { sql } from 'drizzle-orm';
+import { documentRoutes, searchRoutes } from './routes';
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ app.get('/', (c) => {
     version: '1.0.0',
     endpoints: {
       health: '/health',
-      chat: '/api/chat',
+      search: '/api/search',
       documents: '/api/documents',
     },
     documentation: 'Visit /health to check system status',
@@ -58,14 +59,9 @@ app.get('/health', async (c) => {
   }
 });
 
-// API routes will be added here
-app.get('/api/chat', (c) => {
-  return c.json({ message: 'Chat endpoint ready' });
-});
-
-app.get('/api/documents', (c) => {
-  return c.json({ documents: [] });
-});
+// Register API routes
+documentRoutes(app);
+searchRoutes(app);
 
 const port = parseInt(process.env.PORT || '3001');
 
