@@ -292,7 +292,7 @@ This is a personal learning project. Feel free to fork and experiment!
 
 ## License
 
-MIT
+[MIT](./LICENSE)
 
 ## Author
 
