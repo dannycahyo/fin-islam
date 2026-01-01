@@ -2,16 +2,30 @@ import { Context } from 'hono';
 import { z } from 'zod';
 import { SearchService } from '@/services/search.service';
 import { SearchInputSchema } from '@/schemas';
+import { RoutingAgent } from '@/agents/routing-agent';
 
 export class SearchController {
-  constructor(private searchService: SearchService) {}
+  constructor(
+    private searchService: SearchService,
+    private routingAgent: RoutingAgent
+  ) {}
 
   async search(c: Context) {
     try {
       const body = await c.req.json();
       const validatedInput = SearchInputSchema.parse(body);
 
-      const results = await this.searchService.search(validatedInput);
+      // Route query to classify category
+      const routing = await this.routingAgent.process(validatedInput.query);
+
+      // Search with category filter
+      const results = await this.searchService.search({
+        ...validatedInput,
+        filters: {
+          ...validatedInput.filters,
+          category: routing.category,
+        },
+      });
 
       return c.json({
         query: validatedInput.query,
@@ -19,6 +33,11 @@ export class SearchController {
         total: results.length,
         limit: validatedInput.limit,
         threshold: validatedInput.threshold,
+        routing: {
+          category: routing.category,
+          confidence: routing.confidence,
+          explanation: routing.explanation,
+        },
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -40,6 +59,16 @@ export class SearchController {
         return c.json(
           {
             error: 'Failed to generate query embedding',
+            details: error.message,
+          },
+          500
+        );
+      }
+
+      if (error instanceof Error && error.name === 'RoutingAgentError') {
+        return c.json(
+          {
+            error: 'Failed to classify query',
             details: error.message,
           },
           500
