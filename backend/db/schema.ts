@@ -7,7 +7,7 @@ export const documents = pgTable('documents', {
     .primaryKey(),
   title: text('title').notNull(),
   description: text('description'),
-  category: text('category').notNull(), // principles, products, comparison, general
+  category: text('category').notNull(), // principles, products, compliance, comparison, calculation, general
   filePath: text('file_path').notNull(),
   fileType: text('file_type').notNull(), // pdf, docx, txt, md
   status: text('status').default('processing').notNull(), // processing, indexed, failed
