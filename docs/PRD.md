@@ -233,6 +233,7 @@ Acceptance:
 - `compliance` - Halal/haram verification
 - `comparison` - Product/concept comparisons
 - `calculation` - Numerical computations
+- `general` - Miscellaneous questions
 
 **Flow:**
 
