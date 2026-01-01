@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Query categories
 export const QueryCategory = z.enum([
   'principles',
   'products',
@@ -12,20 +11,17 @@ export const QueryCategory = z.enum([
 
 export type QueryCategory = z.infer<typeof QueryCategory>;
 
-// Agent message types
 export interface AgentMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
-// Routing Agent response
 export interface RoutingResult {
   category: QueryCategory;
   confidence: number;
   explanation: string;
 }
 
-// Knowledge Agent response
 export interface KnowledgeResult {
   answer: string;
   sources: Array<{
@@ -35,7 +31,6 @@ export interface KnowledgeResult {
   }>;
 }
 
-// Calculation Agent response
 export interface CalculationResult {
   result: string;
   calculation: {
@@ -46,14 +41,12 @@ export interface CalculationResult {
   };
 }
 
-// Compliance Agent response
 export interface ComplianceResult {
   approved: boolean;
   issues: string[];
   suggestions: string[];
 }
 
-// Orchestrator response
 export interface OrchestratorResponse {
   answer: string;
   category: QueryCategory;
