@@ -3,10 +3,11 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "Node16",
+    "moduleResolution": "node16",
     "outDir": "./dist",
     "rootDir": "./src",
+    "noEmit": false,
     "types": ["node"]
   },
   "include": ["src/**/*"],
