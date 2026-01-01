@@ -21,7 +21,6 @@ app.use(
   })
 );
 
-// Root endpoint
 app.get('/', (c) => {
   return c.json({
     name: 'Islamic Finance RAG API',
@@ -35,7 +34,6 @@ app.get('/', (c) => {
   });
 });
 
-// Health check
 app.get('/health', async (c) => {
   try {
     // Check database connection
