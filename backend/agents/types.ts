@@ -48,10 +48,23 @@ export interface CalculationResult {
   };
 }
 
+export const ComplianceStatus = z.enum(['COMPLIANT', 'FLAGGED']);
+export type ComplianceStatus = z.infer<typeof ComplianceStatus>;
+
 export interface ComplianceResult {
-  approved: boolean;
-  issues: string[];
-  suggestions: string[];
+  status: ComplianceStatus;
+  confidence: number;
+  reasoning: string;
+  violations?: string[];
+  suggestions?: string[];
+}
+
+export interface ComplianceAgentConfig {
+  baseUrl?: string;
+  model?: string;
+  maxRetries?: number;
+  temperature?: number;
+  confidenceThreshold?: number;
 }
 
 export interface OrchestratorResponse {
