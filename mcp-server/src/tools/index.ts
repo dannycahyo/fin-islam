@@ -20,7 +20,7 @@ export function registerTools(server: McpServer): void {
         'In Musharakah, all partners contribute capital and share management. ' +
         'Profits are distributed according to pre-agreed ratio (or capital ratio if not specified). ' +
         'Losses MUST be distributed according to capital ratio as per Shariah requirements.',
-      inputSchema: MusharakahInputSchema.shape,
+      inputSchema: MusharakahInputSchema,
     },
     async (input) => {
       try {
@@ -74,7 +74,7 @@ export function registerTools(server: McpServer): void {
         'The capital provider supplies 100% capital, the entrepreneur provides labor and expertise. ' +
         'Profits are shared according to pre-agreed ratio. ' +
         'Losses are borne entirely by the capital provider (Shariah requirement), while the entrepreneur loses their time and effort.',
-      inputSchema: MudharabahInputSchema.shape,
+      inputSchema: MudharabahInputSchema,
     },
     async (input) => {
       try {
