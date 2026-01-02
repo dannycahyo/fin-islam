@@ -22,6 +22,11 @@ export interface RoutingResult {
   explanation: string;
 }
 
+export interface KnowledgeInput {
+  query: string;
+  context: string;
+}
+
 export interface KnowledgeResult {
   answer: string;
   sources: Array<{
@@ -29,6 +34,8 @@ export interface KnowledgeResult {
     content: string;
     relevance: number;
   }>;
+  confidence: number;
+  category: QueryCategory;
 }
 
 export interface CalculationResult {
