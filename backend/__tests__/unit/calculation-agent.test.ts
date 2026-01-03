@@ -3,13 +3,17 @@ import { CalculationAgent, CalculationAgentError } from '@/agents/calculation-ag
 
 // Mock dependencies
 vi.mock('@langchain/ollama');
+
+// Create a single mock MCP instance that will be reused
+const mockMCPInstance = {
+  connect: vi.fn(),
+  callTool: vi.fn(),
+  disconnect: vi.fn(),
+};
+
 vi.mock('@/lib/mcp-client', () => ({
   MCPClient: {
-    getInstance: vi.fn(() => ({
-      connect: vi.fn(),
-      callTool: vi.fn(),
-      disconnect: vi.fn(),
-    })),
+    getInstance: vi.fn(() => mockMCPInstance),
   },
   MCPClientError: class extends Error {
     constructor(
@@ -24,7 +28,6 @@ vi.mock('@/lib/mcp-client', () => ({
 }));
 
 import { ChatOllama } from '@langchain/ollama';
-import { MCPClient } from '@/lib/mcp-client';
 
 describe('CalculationAgent', () => {
   let agent: CalculationAgent;
@@ -38,14 +41,16 @@ describe('CalculationAgent', () => {
 
     // Setup LLM mock
     mockLLMInvoke = vi.fn();
-    (ChatOllama as any).mockImplementation(() => ({
-      invoke: mockLLMInvoke,
-    }));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (ChatOllama as any).mockImplementation(function () {
+      return {
+        invoke: mockLLMInvoke,
+      };
+    });
 
-    // Setup MCP mock
-    const mcpInstance = (MCPClient.getInstance as any)();
-    mockMCPConnect = mcpInstance.connect;
-    mockMCPCallTool = mcpInstance.callTool;
+    // Setup MCP mock references
+    mockMCPConnect = mockMCPInstance.connect;
+    mockMCPCallTool = mockMCPInstance.callTool;
 
     // Default MCP mock response
     mockMCPConnect.mockResolvedValue(undefined);
