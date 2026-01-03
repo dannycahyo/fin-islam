@@ -48,6 +48,13 @@ export interface CalculationResult {
   };
 }
 
+export type CalculationType = {
+  type: 'musharakah' | 'mudharabah';
+  inputs: Record<string, number>;
+  outputs: Record<string, number>;
+  steps: string[];
+};
+
 export const ComplianceStatus = z.enum(['COMPLIANT', 'FLAGGED']);
 export type ComplianceStatus = z.infer<typeof ComplianceStatus>;
 
@@ -65,14 +72,4 @@ export interface ComplianceAgentConfig {
   maxRetries?: number;
   temperature?: number;
   confidenceThreshold?: number;
-}
-
-export interface OrchestratorResponse {
-  answer: string;
-  category: QueryCategory;
-  sources?: Array<{ documentId: string; relevance: number }>;
-  metadata: {
-    routingConfidence: number;
-    processingTime: number;
-  };
 }

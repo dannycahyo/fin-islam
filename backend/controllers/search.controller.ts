@@ -1,81 +1,89 @@
 import { Context } from 'hono';
+import { stream } from 'hono/streaming';
 import { z } from 'zod';
-import { SearchService } from '@/services/search.service';
-import { SearchInputSchema } from '@/schemas';
-import { RoutingAgent } from '@/agents/routing-agent';
+import { AgentOrchestrator, AgentOrchestratorError } from '@/agents/agent-orchestrator';
+import { SessionStore } from '@/services/session-store';
+import { QueryInputSchema } from '@/schemas/orchestrator.schemas';
 
 export class SearchController {
   constructor(
-    private searchService: SearchService,
-    private routingAgent: RoutingAgent
+    private orchestrator: AgentOrchestrator,
+    private sessionStore: SessionStore
   ) {}
 
-  async search(c: Context) {
+  async createSession(c: Context) {
     try {
-      const body = await c.req.json();
-      const validatedInput = SearchInputSchema.parse(body);
+      const sessionId = this.sessionStore.createSession();
+      const session = this.sessionStore.getSession(sessionId);
 
-      // Route query to classify category
-      const routing = await this.routingAgent.process(validatedInput.query);
-
-      // Search with category filter
-      const results = await this.searchService.search({
-        ...validatedInput,
-        filters: {
-          ...validatedInput.filters,
-          category: routing.category,
-        },
-      });
+      if (!session) {
+        return c.json({ error: 'Failed to create session' }, 500);
+      }
 
       return c.json({
-        query: validatedInput.query,
-        results,
-        total: results.length,
-        limit: validatedInput.limit,
-        threshold: validatedInput.threshold,
-        routing: {
-          category: routing.category,
-          confidence: routing.confidence,
-          explanation: routing.explanation,
-        },
+        sessionId,
+        createdAt: session.createdAt.toISOString(),
       });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return c.json(
-          {
-            error: 'Validation failed',
+      console.error('Session creation error:', error);
+      return c.json({ error: 'Failed to create session' }, 500);
+    }
+  }
+
+  /**
+   * Process query with SSE streaming
+   */
+  async search(c: Context) {
+    return stream(c, async (stream) => {
+      try {
+        const body = await c.req.json();
+        const { query, sessionId: inputSessionId } = QueryInputSchema.parse(body);
+
+        const session = this.sessionStore.getOrCreateSession(inputSessionId);
+        const sessionId = session.sessionId;
+
+        c.header('Content-Type', 'text/event-stream');
+        c.header('Cache-Control', 'no-cache');
+        c.header('Connection', 'keep-alive');
+
+        await stream.writeln(`event: connected\ndata: ${JSON.stringify({ sessionId })}\n`);
+
+        const result = await this.orchestrator.processQuery(query, sessionId, async (event) => {
+          const eventData = JSON.stringify(event.data);
+          await stream.writeln(`event: ${event.type}\ndata: ${eventData}\n`);
+        });
+
+        await stream.writeln(`event: done\ndata: ${JSON.stringify(result)}\n`);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          const errorData = {
+            message: 'Validation failed',
+            code: 'VALIDATION_ERROR',
             details: error.errors.map((e) => ({
               field: e.path.join('.') || 'root',
               message: e.message,
             })),
-          },
-          400
-        );
+          };
+          await stream.writeln(`event: error\ndata: ${JSON.stringify(errorData)}\n`);
+        } else if (error instanceof AgentOrchestratorError) {
+          const errorData = {
+            message: error.message,
+            code: error.code,
+            step: error.step,
+          };
+          await stream.writeln(`event: error\ndata: ${JSON.stringify(errorData)}\n`);
+        } else {
+          const errorData = {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            code: 'UNKNOWN_ERROR',
+          };
+          await stream.writeln(`event: error\ndata: ${JSON.stringify(errorData)}\n`);
+        }
+
+        console.error('Orchestrator error:', error);
+      } finally {
+        await stream.close();
       }
-
-      console.error('Search error:', error);
-
-      if (error instanceof Error && error.name === 'EmbeddingServiceError') {
-        return c.json(
-          {
-            error: 'Failed to generate query embedding',
-            details: error.message,
-          },
-          500
-        );
-      }
-
-      if (error instanceof Error && error.name === 'RoutingAgentError') {
-        return c.json(
-          {
-            error: 'Failed to classify query',
-            details: error.message,
-          },
-          500
-        );
-      }
-
-      return c.json({ error: 'Search failed' }, 500);
-    }
+    });
   }
 }
