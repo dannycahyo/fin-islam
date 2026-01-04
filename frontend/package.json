@@ -12,6 +12,7 @@
     "clean": "rm -rf node_modules dist build .vite"
   },
   "dependencies": {
+    "shared": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router": "^7.1.1",

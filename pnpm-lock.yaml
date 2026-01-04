@@ -83,6 +83,9 @@ importers:
       postgres:
         specifier: ^3.4.5
         version: 3.4.7
+      shared:
+        specifier: workspace:*
+        version: link:../shared
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -186,6 +189,9 @@ importers:
       react-router:
         specifier: ^7.1.1
         version: 7.11.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      shared:
+        specifier: workspace:*
+        version: link:../shared
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.6.0
@@ -250,6 +256,16 @@ importers:
         version: 4.21.0
       typescript:
         specifier: ^5.7.2
+        version: 5.9.3
+
+  shared:
+    dependencies:
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ^5.3.3
         version: 5.9.3
 
 packages:

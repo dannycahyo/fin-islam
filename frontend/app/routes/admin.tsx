@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { FileText } from 'lucide-react';
 import { DocumentUploadForm } from '~/components/document-upload-form';
+import { DocumentList } from '~/components/document-list';
 
 export default function AdminPage() {
   return (
@@ -35,13 +35,7 @@ export default function AdminPage() {
             <CardDescription>View and manage uploaded documents</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {/* Placeholder for empty state */}
-              <div className="rounded-lg border border-dashed p-8 text-center">
-                <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-                <p className="mt-4 text-sm text-muted-foreground">No documents uploaded yet</p>
-              </div>
-            </div>
+            <DocumentList />
           </CardContent>
         </Card>
       </div>
