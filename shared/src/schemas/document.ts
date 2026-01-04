@@ -36,9 +36,17 @@ export const DeleteDocumentResponseSchema = z.object({
   message: z.string(),
 });
 
+export const DocumentUploadResponseSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  status: DocumentStatusEnum,
+  message: z.string(),
+});
+
 export type Document = z.infer<typeof DocumentSchema>;
 export type DocumentUploadFields = z.infer<typeof DocumentUploadFieldsSchema>;
 export type DocumentParam = z.infer<typeof DocumentParamSchema>;
 export type ListDocumentsQuery = z.infer<typeof ListDocumentsQuerySchema>;
 export type DocumentListResponse = z.infer<typeof DocumentListResponseSchema>;
 export type DeleteDocumentResponse = z.infer<typeof DeleteDocumentResponseSchema>;
+export type DocumentUploadResponse = z.infer<typeof DocumentUploadResponseSchema>;

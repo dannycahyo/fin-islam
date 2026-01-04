@@ -12,21 +12,22 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import { useToast } from '~/hooks/use-toast';
+import { useUploadDocument } from '~/hooks/use-documents';
 import {
-  Category,
   formReducer,
   initialFormState,
   validateFile,
   validateForm,
 } from '~/reducer/documentUploadFormReducer';
 import { FILE_EXTENSIONS, MAX_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH } from '~/constants/document';
+import type { DocumentCategory } from 'shared';
 
 export function DocumentUploadForm() {
   const [state, dispatch] = useReducer(formReducer, initialFormState);
   const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const uploadMutation = useUploadDocument();
 
   const handleFileSelect = (file: File) => {
     const error = validateFile(file);
@@ -83,7 +84,7 @@ export function DocumentUploadForm() {
   };
 
   const handleCategoryChange = (value: string) => {
-    dispatch({ type: 'SET_CATEGORY', payload: value as Category });
+    dispatch({ type: 'SET_CATEGORY', payload: value as DocumentCategory });
     if (state.errors.category) {
       dispatch({ type: 'CLEAR_ERROR', field: 'category' });
     }
@@ -112,43 +113,34 @@ export function DocumentUploadForm() {
       return;
     }
 
-    setIsUploading(true);
+    uploadMutation.mutate(
+      {
+        file: state.file!,
+        title: state.title,
+        category: state.category as DocumentCategory,
+        description: state.description || undefined,
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: 'Success',
+            description: 'Document uploaded successfully.',
+          });
 
-    try {
-      const formData = new FormData();
-      formData.append('file', state.file!);
-      formData.append('title', state.title);
-      formData.append('category', state.category);
-      formData.append('description', state.description);
-
-      const response = await fetch('/api/documents/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Upload failed');
+          dispatch({ type: 'RESET_FORM' });
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+        },
+        onError: () => {
+          toast({
+            title: 'Error',
+            description: 'Failed to upload document. Please try again.',
+            variant: 'destructive',
+          });
+        },
       }
-
-      toast({
-        title: 'Success',
-        description: 'Document uploaded successfully.',
-      });
-
-      // Reset form
-      dispatch({ type: 'RESET_FORM' });
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to upload document. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsUploading(false);
-    }
+    );
   };
 
   const isFormValid =
@@ -257,9 +249,11 @@ export function DocumentUploadForm() {
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="principle">Principle</SelectItem>
-            <SelectItem value="product">Product</SelectItem>
+            <SelectItem value="principles">Principles</SelectItem>
+            <SelectItem value="products">Products</SelectItem>
+            <SelectItem value="compliance">Compliance</SelectItem>
             <SelectItem value="comparison">Comparison</SelectItem>
+            <SelectItem value="calculation">Calculation</SelectItem>
             <SelectItem value="general">General</SelectItem>
           </SelectContent>
         </Select>
@@ -290,8 +284,8 @@ export function DocumentUploadForm() {
       </div>
 
       {/* Submit Button */}
-      <Button type="submit" disabled={!isFormValid || isUploading} className="w-full">
-        {isUploading ? 'Uploading...' : 'Upload Document'}
+      <Button type="submit" disabled={!isFormValid || uploadMutation.isPending} className="w-full">
+        {uploadMutation.isPending ? 'Uploading...' : 'Upload Document'}
       </Button>
     </form>
   );
