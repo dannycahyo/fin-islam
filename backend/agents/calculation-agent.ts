@@ -219,7 +219,7 @@ export class CalculationAgent {
       result: explanation,
       calculation: {
         type: extraction.type,
-        inputs: this.extractInputs(mcpResult, extraction),
+        inputs: this.extractInputs(extraction),
         outputs: this.extractOutputs(mcpResult),
         steps: mcpResult.calculation_steps || [],
       },
@@ -298,10 +298,7 @@ export class CalculationAgent {
     return lines;
   }
 
-  private extractInputs(
-    mcpResult: MCPResponse,
-    extraction: ExtractionResult
-  ): Record<string, number> {
+  private extractInputs(extraction: ExtractionResult): Record<string, number> {
     const inputs: Record<string, number> = {};
 
     if (extraction.type === 'musharakah') {
