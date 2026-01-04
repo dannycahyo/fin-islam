@@ -1,3 +1,4 @@
+import type { DocumentCategory } from 'shared';
 import {
   ALLOWED_FILE_TYPES,
   FILE_EXTENSIONS,
@@ -6,13 +7,10 @@ import {
   MAX_DESCRIPTION_LENGTH,
 } from '~/constants/document';
 
-// Types
-export type Category = 'principle' | 'product' | 'comparison' | 'general';
-
 export interface FormState {
   file: File | null;
   title: string;
-  category: Category | '';
+  category: DocumentCategory | '';
   description: string;
   errors: {
     file?: string;
@@ -25,7 +23,7 @@ export interface FormState {
 export type FormAction =
   | { type: 'SET_FILE'; payload: File | null }
   | { type: 'SET_TITLE'; payload: string }
-  | { type: 'SET_CATEGORY'; payload: Category | '' }
+  | { type: 'SET_CATEGORY'; payload: DocumentCategory | '' }
   | { type: 'SET_DESCRIPTION'; payload: string }
   | { type: 'SET_ERROR'; field: keyof FormState['errors']; message: string }
   | { type: 'CLEAR_ERROR'; field: keyof FormState['errors'] }
