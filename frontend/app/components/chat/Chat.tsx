@@ -3,38 +3,23 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
-import { ChatAction, Message } from './types';
+import { Message } from './types';
 import { chatReducer, initialState } from '~/reducer/chatReducer';
-
-// TODO: Replace with actual API call
-const mockStreamResponse = async (messageId: string, dispatch: React.Dispatch<ChatAction>) => {
-  const mockResponses = [
-    'Islamic finance is based on **Shariah principles** that prohibit:',
-    'Islamic finance is based on **Shariah principles** that prohibit:\n\n1. **Riba** (interest)',
-    'Islamic finance is based on **Shariah principles** that prohibit:\n\n1. **Riba** (interest)\n2. **Gharar** (excessive uncertainty)',
-    'Islamic finance is based on **Shariah principles** that prohibit:\n\n1. **Riba** (interest)\n2. **Gharar** (excessive uncertainty)\n3. **Maysir** (gambling)',
-    'Islamic finance is based on **Shariah principles** that prohibit:\n\n1. **Riba** (interest)\n2. **Gharar** (excessive uncertainty)\n3. **Maysir** (gambling)\n\nInstead, it promotes:\n- Profit and loss sharing\n- Asset-backed financing\n- Ethical investments',
-  ];
-
-  for (let i = 0; i < mockResponses.length; i++) {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    dispatch({
-      type: 'UPDATE_MESSAGE',
-      payload: { id: messageId, content: mockResponses[i] },
-    });
-  }
-
-  dispatch({
-    type: 'SET_MESSAGE_STATUS',
-    payload: { id: messageId, status: 'sent' },
-  });
-  dispatch({ type: 'STOP_STREAMING' });
-};
+import { useSession } from '~/hooks/use-session';
+import { useChatStream } from '~/hooks/use-chat-stream';
 
 export function Chat() {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const { data: session, isLoading: sessionLoading, error: sessionError } = useSession();
+  const { sendMessage, disconnect } = useChatStream(dispatch);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => disconnect();
+  }, [disconnect]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -42,6 +27,11 @@ export function Chat() {
   }, [state.messages]);
 
   const handleSendMessage = async (content: string) => {
+    if (!session?.sessionId) {
+      dispatch({ type: 'SET_ERROR', payload: 'Session not ready' });
+      return;
+    }
+
     // Clear any previous errors
     dispatch({ type: 'CLEAR_ERROR' });
 
@@ -63,43 +53,47 @@ export function Chat() {
       });
     }, 100);
 
-    // TODO: Replace with actual API call to backend
-    // Example: const response = await fetch('/api/chat', { ... })
+    // Add assistant message placeholder
+    dispatch({ type: 'START_STREAMING' });
+    const assistantMessage: Message = {
+      id: `assistant-${Date.now()}`,
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      timestamp: new Date(),
+    };
+    dispatch({ type: 'ADD_MESSAGE', payload: assistantMessage });
 
-    try {
-      dispatch({ type: 'START_STREAMING' });
-
-      // Add assistant message with streaming status
-      const assistantMessage: Message = {
-        id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        content: '',
-        status: 'streaming',
-        timestamp: new Date(),
-      };
-
-      dispatch({ type: 'ADD_MESSAGE', payload: assistantMessage });
-
-      // Mock streaming response
-      await mockStreamResponse(assistantMessage.id, dispatch);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to get response';
-
-      dispatch({ type: 'SET_ERROR', payload: errorMessage });
-      dispatch({ type: 'STOP_STREAMING' });
-
-      // If there's an assistant message, mark it as error
-      const lastMessage = state.messages[state.messages.length - 1];
-      if (lastMessage?.role === 'assistant') {
-        dispatch({
-          type: 'SET_MESSAGE_ERROR',
-          payload: { id: lastMessage.id, error: errorMessage },
-        });
-      }
-    }
+    // Start SSE stream
+    await sendMessage(content, session.sessionId, assistantMessage.id);
   };
 
   const isEmpty = state.messages.length === 0;
+
+  // Show session loading state
+  if (sessionLoading) {
+    return (
+      <Card className="flex h-[calc(100vh-12rem)] flex-col">
+        <CardContent className="flex h-full items-center justify-center">
+          <div className="text-center text-muted-foreground">
+            <p>Initializing chat...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (sessionError) {
+    return (
+      <Card className="flex h-[calc(100vh-12rem)] flex-col">
+        <CardContent className="flex h-full items-center justify-center">
+          <div className="text-center text-destructive">
+            <p>Failed to start session. Please refresh the page.</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="flex h-[calc(100vh-12rem)] flex-col">
