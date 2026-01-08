@@ -25,13 +25,13 @@ registerTools(server);
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.log('Islamic Finance MCP Calculator server started');
-  console.log('Available tools: calculate_musharakah, calculate_mudharabah');
+  console.error('Islamic Finance MCP Calculator server started');
+  console.error('Available tools: calculate_musharakah, calculate_mudharabah');
 }
 
 // Graceful shutdown
 process.stdin.on('close', () => {
-  console.log('Islamic Finance MCP Calculator server closed');
+  console.error('Islamic Finance MCP Calculator server closed');
   server.close();
 });
 
