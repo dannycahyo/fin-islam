@@ -5,6 +5,7 @@
   "description": "AI-powered Islamic Finance Knowledge Assistant",
   "author": "Danny - AI Engineer",
   "license": "MIT",
+  "type": "module",
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
@@ -24,6 +25,7 @@
     "db:migrate": "pnpm --filter backend db:migrate",
     "db:studio": "pnpm --filter backend db:studio",
     "ollama:pull": "ollama pull llama3.1:8b && ollama pull nomic-embed-text",
+    "seed": "tsx scripts/seed-documents.ts",
     "test": "pnpm -r test",
     "test:backend": "pnpm --filter backend test",
     "test:frontend": "pnpm --filter frontend test",
@@ -43,11 +45,13 @@
     "@typescript-eslint/parser": "^6.19.1",
     "@vitest/coverage-v8": "^4.0.16",
     "@vitest/ui": "^4.0.16",
+    "chalk": "^5.3.0",
     "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.2.5",
+    "tsx": "^4.19.2",
     "typescript": "^5.3.3",
     "vitest": "^4.0.16"
   }
