@@ -30,6 +30,7 @@
     "test:mcp": "pnpm --filter mcp-server test",
     "test:watch": "pnpm -r test:watch",
     "test:coverage": "pnpm -r test:coverage",
+    "test:accuracy": "tsx tests/run-accuracy-test.ts",
     "lint": "pnpm -r lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
@@ -48,6 +49,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.2.5",
+    "tsx": "^4.19.2",
     "typescript": "^5.3.3",
     "vitest": "^4.0.16"
   }

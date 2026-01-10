@@ -1,0 +1,669 @@
+{
+  "metadata": {
+    "totalQuestions": 55,
+    "categories": {
+      "principles": 15,
+      "products": 15,
+      "compliance": 10,
+      "comparison": 10,
+      "calculation": 5
+    },
+    "version": "1.0.0",
+    "created": "2026-01-10"
+  },
+  "questions": [
+    {
+      "id": "P001",
+      "category": "principles",
+      "question": "What is Riba and why is it prohibited in Islam?",
+      "expectedAnswer": {
+        "mustInclude": ["interest", "prohibited", "exploitation", "unfair advantage", "Quran"],
+        "shouldMention": ["Al-Baqarah", "2:275", "unjust enrichment"],
+        "accuracy": "Should explain Riba as prohibited interest/usury and reference Islamic sources"
+      }
+    },
+    {
+      "id": "P002",
+      "category": "principles",
+      "question": "Explain the concept of Gharar in Islamic finance",
+      "expectedAnswer": {
+        "mustInclude": ["uncertainty", "ambiguity", "risk", "prohibited"],
+        "shouldMention": ["contractual uncertainty", "excessive risk"],
+        "accuracy": "Should define Gharar as excessive uncertainty/ambiguity in contracts"
+      }
+    },
+    {
+      "id": "P003",
+      "category": "principles",
+      "question": "What is Maysir and how does it differ from legitimate business risk?",
+      "expectedAnswer": {
+        "mustInclude": ["gambling", "speculation", "prohibited", "unearned gain"],
+        "shouldMention": ["chance", "luck", "business risk", "legitimate trade"],
+        "accuracy": "Should distinguish Maysir (gambling) from legitimate business risk-taking"
+      }
+    },
+    {
+      "id": "P004",
+      "category": "principles",
+      "question": "What are the five core principles of Islamic finance?",
+      "expectedAnswer": {
+        "mustInclude": [
+          "prohibition of Riba",
+          "prohibition of Gharar",
+          "prohibition of Maysir",
+          "asset-backed",
+          "profit-loss sharing"
+        ],
+        "shouldMention": ["ethical investment", "Shariah compliance"],
+        "accuracy": "Should list and explain main principles"
+      }
+    },
+    {
+      "id": "P005",
+      "category": "principles",
+      "question": "Why must Islamic finance transactions be asset-backed?",
+      "expectedAnswer": {
+        "mustInclude": ["real economic activity", "tangible asset", "productive", "speculation"],
+        "shouldMention": ["real economy", "substance over form"],
+        "accuracy": "Should explain asset-backing requirement prevents speculation and ensures real value"
+      }
+    },
+    {
+      "id": "P006",
+      "category": "principles",
+      "question": "What is the principle of profit and loss sharing in Islamic finance?",
+      "expectedAnswer": {
+        "mustInclude": ["risk sharing", "partnership", "profit", "loss", "fairness"],
+        "shouldMention": ["Musharakah", "Mudharabah", "equity-based"],
+        "accuracy": "Should explain PLS as equitable risk/reward distribution"
+      }
+    },
+    {
+      "id": "P007",
+      "category": "principles",
+      "question": "Can you explain the concept of Halal and Haram investments?",
+      "expectedAnswer": {
+        "mustInclude": ["permissible", "forbidden", "Shariah", "screening"],
+        "shouldMention": ["alcohol", "pork", "gambling", "tobacco", "weapons", "financial ratios"],
+        "accuracy": "Should explain screening criteria for permissible investments"
+      }
+    },
+    {
+      "id": "P008",
+      "category": "principles",
+      "question": "What role does Shariah play in Islamic banking?",
+      "expectedAnswer": {
+        "mustInclude": ["Islamic law", "governance", "compliance", "Shariah board"],
+        "shouldMention": ["scholars", "supervision", "fatwa"],
+        "accuracy": "Should explain Shariah as governing framework with oversight mechanisms"
+      }
+    },
+    {
+      "id": "P009",
+      "category": "principles",
+      "question": "Is insurance allowed in Islam?",
+      "expectedAnswer": {
+        "mustInclude": ["conventional insurance", "prohibited", "Takaful", "alternative"],
+        "shouldMention": ["Gharar", "Maysir", "cooperative", "mutual guarantee"],
+        "accuracy": "Should explain conventional insurance issues and Takaful as Shariah-compliant alternative"
+      }
+    },
+    {
+      "id": "P010",
+      "category": "principles",
+      "question": "What is the time value of money in Islamic finance?",
+      "expectedAnswer": {
+        "mustInclude": ["money has no intrinsic value", "productivity", "asset", "trade"],
+        "shouldMention": ["interest prohibition", "profit from use", "rental"],
+        "accuracy": "Should explain money earns return only through productive use, not time alone"
+      }
+    },
+    {
+      "id": "P011",
+      "category": "principles",
+      "question": "Explain the concept of Al-Wadiah (safekeeping)",
+      "expectedAnswer": {
+        "mustInclude": ["safekeeping", "deposit", "trust", "guarantee"],
+        "shouldMention": ["current account", "no return", "custody"],
+        "accuracy": "Should explain Al-Wadiah as trust-based safekeeping arrangement"
+      }
+    },
+    {
+      "id": "P012",
+      "category": "principles",
+      "question": "What is the difference between Shariah-compliant and ethical investing?",
+      "expectedAnswer": {
+        "mustInclude": ["Shariah", "Islamic law", "ethical", "broader"],
+        "shouldMention": ["religious requirements", "ESG", "overlap", "different criteria"],
+        "accuracy": "Should distinguish religious compliance from secular ethical criteria"
+      }
+    },
+    {
+      "id": "P013",
+      "category": "principles",
+      "question": "How does Islamic finance view debt?",
+      "expectedAnswer": {
+        "mustInclude": ["debt", "permissible", "no interest", "asset-backed"],
+        "shouldMention": ["obligation", "trade-based", "Murabaha"],
+        "accuracy": "Should explain debt allowed when interest-free and tied to real assets"
+      }
+    },
+    {
+      "id": "P014",
+      "category": "principles",
+      "question": "What is the principle of justice (Adl) in Islamic transactions?",
+      "expectedAnswer": {
+        "mustInclude": ["justice", "fairness", "equality", "transparency"],
+        "shouldMention": ["exploitation", "information asymmetry", "mutual consent"],
+        "accuracy": "Should explain justice as foundational principle ensuring fair dealing"
+      }
+    },
+    {
+      "id": "P015",
+      "category": "principles",
+      "question": "Can Islamic banks charge fees for services?",
+      "expectedAnswer": {
+        "mustInclude": ["fees", "permissible", "services", "actual cost"],
+        "shouldMention": ["not disguised interest", "legitimate expenses", "transparency"],
+        "accuracy": "Should explain fees allowed for actual services, not as interest substitute"
+      }
+    },
+    {
+      "id": "PR001",
+      "category": "products",
+      "question": "What is Murabaha and how does it work?",
+      "expectedAnswer": {
+        "mustInclude": ["cost-plus", "sale", "markup", "asset", "deferred payment"],
+        "shouldMention": ["disclosed profit", "ownership", "commodity"],
+        "accuracy": "Should explain Murabaha as cost-plus financing with disclosed markup"
+      }
+    },
+    {
+      "id": "PR002",
+      "category": "products",
+      "question": "Explain the difference between Musharakah and Mudharabah",
+      "expectedAnswer": {
+        "mustInclude": ["partnership", "Musharakah", "Mudharabah", "capital", "management"],
+        "shouldMention": [
+          "both contribute capital vs one contributes capital",
+          "profit sharing",
+          "loss bearing"
+        ],
+        "accuracy": "Should distinguish both as partnerships but with different capital/management arrangements"
+      }
+    },
+    {
+      "id": "PR003",
+      "category": "products",
+      "question": "How does Islamic home financing work through Ijarah?",
+      "expectedAnswer": {
+        "mustInclude": ["lease", "rental", "ownership transfer", "installments"],
+        "shouldMention": ["Ijarah Muntahia Bittamleek", "lease-to-own", "bank owns asset"],
+        "accuracy": "Should explain Ijarah as lease-based financing with eventual ownership transfer"
+      }
+    },
+    {
+      "id": "PR004",
+      "category": "products",
+      "question": "What are Sukuk and how do they differ from conventional bonds?",
+      "expectedAnswer": {
+        "mustInclude": ["Islamic bonds", "asset-backed", "ownership certificate", "profit sharing"],
+        "shouldMention": ["no interest", "underlying asset", "return based on performance"],
+        "accuracy": "Should explain Sukuk as asset-backed securities vs debt instruments"
+      }
+    },
+    {
+      "id": "PR005",
+      "category": "products",
+      "question": "Explain how Takaful insurance works",
+      "expectedAnswer": {
+        "mustInclude": ["Islamic insurance", "cooperative", "mutual guarantee", "participants"],
+        "shouldMention": ["pooled funds", "Tabarru", "donation", "surplus distribution"],
+        "accuracy": "Should explain Takaful as cooperative insurance based on mutual guarantee"
+      }
+    },
+    {
+      "id": "PR006",
+      "category": "products",
+      "question": "What is Wakalah and when is it used?",
+      "expectedAnswer": {
+        "mustInclude": ["agency", "representative", "principal", "fee"],
+        "shouldMention": ["contract", "specific task", "defined scope"],
+        "accuracy": "Should explain Wakalah as agency contract for specific services"
+      }
+    },
+    {
+      "id": "PR007",
+      "category": "products",
+      "question": "How does Salam contract work in Islamic finance?",
+      "expectedAnswer": {
+        "mustInclude": ["forward sale", "advance payment", "deferred delivery", "commodity"],
+        "shouldMention": ["agricultural", "full payment upfront", "specified future date"],
+        "accuracy": "Should explain Salam as prepaid purchase with future delivery"
+      }
+    },
+    {
+      "id": "PR008",
+      "category": "products",
+      "question": "What is Istisna and how is it different from Salam?",
+      "expectedAnswer": {
+        "mustInclude": ["manufacturing", "construction", "specifications", "progressive payment"],
+        "shouldMention": [
+          "Salam requires full payment",
+          "Istisna allows installments",
+          "customized goods"
+        ],
+        "accuracy": "Should distinguish Istisna (manufacturing with flexible payment) from Salam"
+      }
+    },
+    {
+      "id": "PR009",
+      "category": "products",
+      "question": "Can you explain Diminishing Musharakah for home financing?",
+      "expectedAnswer": {
+        "mustInclude": ["partnership", "gradual ownership transfer", "buyout", "installments"],
+        "shouldMention": [
+          "bank's share decreases",
+          "rent plus purchase",
+          "eventual full ownership"
+        ],
+        "accuracy": "Should explain reducing partnership where customer gradually buys bank's share"
+      }
+    },
+    {
+      "id": "PR010",
+      "category": "products",
+      "question": "What is Qard Hassan?",
+      "expectedAnswer": {
+        "mustInclude": ["benevolent loan", "no interest", "principal only", "charitable"],
+        "shouldMention": ["social welfare", "repayment of amount only", "no profit"],
+        "accuracy": "Should explain as interest-free loan for social purposes"
+      }
+    },
+    {
+      "id": "PR011",
+      "category": "products",
+      "question": "How do Islamic credit cards work?",
+      "expectedAnswer": {
+        "mustInclude": ["no interest", "fees", "card facility"],
+        "shouldMention": [
+          "Tawarruq",
+          "commodity Murabaha",
+          "service charge",
+          "no rollover interest"
+        ],
+        "accuracy": "Should explain Shariah-compliant alternatives using Tawarruq or fee-based models"
+      }
+    },
+    {
+      "id": "PR012",
+      "category": "products",
+      "question": "What is Bai Bithaman Ajil?",
+      "expectedAnswer": {
+        "mustInclude": ["deferred payment sale", "installments", "markup", "fixed price"],
+        "shouldMention": ["asset sale", "long-term financing", "popular in Malaysia"],
+        "accuracy": "Should explain as deferred payment sale with fixed total price"
+      }
+    },
+    {
+      "id": "PR013",
+      "category": "products",
+      "question": "Explain Mudarabah investment accounts in Islamic banks",
+      "expectedAnswer": {
+        "mustInclude": [
+          "profit-sharing",
+          "investor capital",
+          "bank expertise",
+          "no guaranteed return"
+        ],
+        "shouldMention": ["loss borne by investor", "profit shared", "investment account"],
+        "accuracy": "Should explain as profit-sharing deposit where returns vary with performance"
+      }
+    },
+    {
+      "id": "PR014",
+      "category": "products",
+      "question": "What is Tawarruq and why is it controversial?",
+      "expectedAnswer": {
+        "mustInclude": ["reverse Murabaha", "commodity sale", "liquidity", "cash"],
+        "shouldMention": [
+          "controversial",
+          "some scholars",
+          "organized Tawarruq",
+          "concerns about form vs substance"
+        ],
+        "accuracy": "Should explain mechanism and scholarly debate about its permissibility"
+      }
+    },
+    {
+      "id": "PR015",
+      "category": "products",
+      "question": "How does Islamic project finance work?",
+      "expectedAnswer": {
+        "mustInclude": ["Musharakah", "Istisna", "Ijarah", "asset-backed", "project"],
+        "shouldMention": ["combination of contracts", "infrastructure", "long-term"],
+        "accuracy": "Should explain using multiple Shariah contracts for large projects"
+      }
+    },
+    {
+      "id": "C001",
+      "category": "compliance",
+      "question": "What is a Shariah Supervisory Board and what do they do?",
+      "expectedAnswer": {
+        "mustInclude": ["Shariah scholars", "oversight", "approval", "compliance", "fatwa"],
+        "shouldMention": ["independent", "qualified scholars", "product approval", "audit"],
+        "accuracy": "Should explain SSB role in ensuring Shariah compliance through oversight"
+      }
+    },
+    {
+      "id": "C002",
+      "category": "compliance",
+      "question": "How do Islamic banks purify non-compliant income?",
+      "expectedAnswer": {
+        "mustInclude": ["purification", "charity", "non-compliant income", "donation"],
+        "shouldMention": [
+          "unintentional income",
+          "interest received",
+          "cannot benefit",
+          "must give away"
+        ],
+        "accuracy": "Should explain process of donating impermissible income to charity"
+      }
+    },
+    {
+      "id": "C003",
+      "category": "compliance",
+      "question": "What are the main Shariah standards organizations?",
+      "expectedAnswer": {
+        "mustInclude": ["AAOIFI", "Islamic Financial Services Board"],
+        "shouldMention": ["standards", "guidelines", "international", "Bahrain", "Malaysia"],
+        "accuracy": "Should mention key organizations setting Islamic finance standards"
+      }
+    },
+    {
+      "id": "C004",
+      "category": "compliance",
+      "question": "How is Shariah compliance audited in Islamic banks?",
+      "expectedAnswer": {
+        "mustInclude": ["Shariah audit", "review", "compliance", "independent"],
+        "shouldMention": ["internal Shariah audit", "external review", "annual report", "SSB"],
+        "accuracy": "Should explain multi-layer audit process for compliance verification"
+      }
+    },
+    {
+      "id": "C005",
+      "category": "compliance",
+      "question": "What happens if an Islamic bank violates Shariah principles?",
+      "expectedAnswer": {
+        "mustInclude": ["rectification", "purification", "SSB review", "corrective action"],
+        "shouldMention": ["disposal of income", "contract revision", "reputation risk"],
+        "accuracy": "Should explain remediation process and consequences"
+      }
+    },
+    {
+      "id": "C006",
+      "category": "compliance",
+      "question": "Are there different schools of thought in Islamic finance?",
+      "expectedAnswer": {
+        "mustInclude": ["scholars", "differences", "interpretation", "flexibility"],
+        "shouldMention": ["Fiqh schools", "ijtihad", "varying opinions", "country differences"],
+        "accuracy": "Should acknowledge scholarly differences and their impact"
+      }
+    },
+    {
+      "id": "C007",
+      "category": "compliance",
+      "question": "How do Islamic banks screen stocks for Shariah compliance?",
+      "expectedAnswer": {
+        "mustInclude": [
+          "business activity screening",
+          "financial ratio screening",
+          "prohibited sectors"
+        ],
+        "shouldMention": [
+          "debt ratios",
+          "interest income",
+          "alcohol",
+          "gambling",
+          "pork",
+          "threshold"
+        ],
+        "accuracy": "Should explain two-tier screening: business and financial ratios"
+      }
+    },
+    {
+      "id": "C008",
+      "category": "compliance",
+      "question": "What is the role of AAOIFI in Islamic finance?",
+      "expectedAnswer": {
+        "mustInclude": [
+          "Accounting and Auditing Organization",
+          "standards",
+          "Islamic finance",
+          "guidelines"
+        ],
+        "shouldMention": ["Shariah standards", "accounting standards", "governance", "ethics"],
+        "accuracy": "Should explain AAOIFI's role in standardization"
+      }
+    },
+    {
+      "id": "C009",
+      "category": "compliance",
+      "question": "Can an Islamic bank invest in conventional bonds?",
+      "expectedAnswer": {
+        "mustInclude": ["no", "prohibited", "interest-bearing", "Riba"],
+        "shouldMention": ["Sukuk alternative", "Shariah-compliant alternatives"],
+        "accuracy": "Should clearly state prohibition with reasoning"
+      }
+    },
+    {
+      "id": "C010",
+      "category": "compliance",
+      "question": "What is the Shariah ruling on late payment penalties?",
+      "expectedAnswer": {
+        "mustInclude": ["controversial", "prohibited by many scholars", "penalty"],
+        "shouldMention": ["charity", "alternative mechanisms", "actual damages", "not profit"],
+        "accuracy": "Should explain majority prohibition and permitted alternatives"
+      }
+    },
+    {
+      "id": "CM001",
+      "category": "comparison",
+      "question": "What is the main difference between Islamic and conventional banking?",
+      "expectedAnswer": {
+        "mustInclude": [
+          "interest prohibition",
+          "profit-loss sharing",
+          "asset-backed",
+          "Shariah compliance"
+        ],
+        "shouldMention": ["risk sharing", "ethical screening", "interest-based vs trade-based"],
+        "accuracy": "Should highlight fundamental philosophical and operational differences"
+      }
+    },
+    {
+      "id": "CM002",
+      "category": "comparison",
+      "question": "How do Islamic mortgages differ from conventional mortgages?",
+      "expectedAnswer": {
+        "mustInclude": ["no interest", "ownership", "lease", "partnership"],
+        "shouldMention": ["Ijarah", "Diminishing Musharakah", "Murabaha", "bank owns asset"],
+        "accuracy": "Should explain structural differences in financing mechanism"
+      }
+    },
+    {
+      "id": "CM003",
+      "category": "comparison",
+      "question": "Compare Sukuk with conventional bonds",
+      "expectedAnswer": {
+        "mustInclude": ["asset ownership", "profit sharing", "interest", "debt vs equity"],
+        "shouldMention": [
+          "underlying asset",
+          "certificate of ownership",
+          "fixed return vs variable"
+        ],
+        "accuracy": "Should distinguish ownership-based vs debt-based instruments"
+      }
+    },
+    {
+      "id": "CM004",
+      "category": "comparison",
+      "question": "How does Takaful differ from conventional insurance?",
+      "expectedAnswer": {
+        "mustInclude": ["cooperative", "mutual guarantee", "profit-driven", "ownership"],
+        "shouldMention": [
+          "Tabarru",
+          "surplus sharing",
+          "separate funds",
+          "participants vs policyholders"
+        ],
+        "accuracy": "Should explain cooperative mutual model vs commercial insurance"
+      }
+    },
+    {
+      "id": "CM005",
+      "category": "comparison",
+      "question": "Are Islamic banking products more expensive than conventional ones?",
+      "expectedAnswer": {
+        "mustInclude": ["competitive", "similar", "pricing", "varies"],
+        "shouldMention": [
+          "market conditions",
+          "efficiency",
+          "sometimes higher",
+          "transaction costs"
+        ],
+        "accuracy": "Should give balanced view of pricing factors and competitiveness"
+      }
+    },
+    {
+      "id": "CM006",
+      "category": "comparison",
+      "question": "Can non-Muslims use Islamic banking products?",
+      "expectedAnswer": {
+        "mustInclude": ["yes", "anyone", "open to all", "universal principles"],
+        "shouldMention": [
+          "ethical",
+          "fairness",
+          "growing interest",
+          "non-Muslim majority countries"
+        ],
+        "accuracy": "Should affirm accessibility to all and explain appeal"
+      }
+    },
+    {
+      "id": "CM007",
+      "category": "comparison",
+      "question": "How do Islamic and conventional banks handle defaults?",
+      "expectedAnswer": {
+        "mustInclude": ["no penalty interest", "restructuring", "collateral"],
+        "shouldMention": [
+          "late payment",
+          "actual costs only",
+          "charity clause",
+          "conventional charges compound interest"
+        ],
+        "accuracy": "Should contrast penalty approaches and remedies"
+      }
+    },
+    {
+      "id": "CM008",
+      "category": "comparison",
+      "question": "Compare risk management in Islamic vs conventional banks",
+      "expectedAnswer": {
+        "mustInclude": ["risk sharing", "derivatives limitations", "hedging"],
+        "shouldMention": [
+          "profit-loss sharing",
+          "asset-backed",
+          "liquidity management",
+          "challenges"
+        ],
+        "accuracy": "Should explain different risk profiles and management tools"
+      }
+    },
+    {
+      "id": "CM009",
+      "category": "comparison",
+      "question": "How do deposit accounts differ in Islamic vs conventional banks?",
+      "expectedAnswer": {
+        "mustInclude": ["no guaranteed return", "profit-sharing", "guaranteed interest", "types"],
+        "shouldMention": ["Wadiah", "Mudarabah", "risk", "savings vs investment accounts"],
+        "accuracy": "Should distinguish guaranteed vs profit-sharing deposit structures"
+      }
+    },
+    {
+      "id": "CM010",
+      "category": "comparison",
+      "question": "Are Islamic banks safer than conventional banks?",
+      "expectedAnswer": {
+        "mustInclude": ["depends", "risk factors", "structure", "regulation"],
+        "shouldMention": [
+          "asset-backed",
+          "risk sharing",
+          "stability",
+          "financial crisis",
+          "varies by institution"
+        ],
+        "accuracy": "Should provide balanced analysis of safety factors"
+      }
+    },
+    {
+      "id": "CA001",
+      "category": "calculation",
+      "question": "In a Musharakah partnership, Partner A contributes $60,000, Partner B contributes $40,000. They agree to share profits 50-50. If the business makes $20,000 profit, how is it distributed?",
+      "expectedAnswer": {
+        "mustInclude": ["Partner A: $10,000", "Partner B: $10,000", "50-50 agreement"],
+        "shouldMention": ["profit ratio", "agreement-based", "not capital ratio"],
+        "accuracy": "Should calculate based on agreed ratio, not capital contribution"
+      }
+    },
+    {
+      "id": "CA002",
+      "category": "calculation",
+      "question": "Using the same Musharakah from CA001, if the business loses $15,000, how is the loss distributed?",
+      "expectedAnswer": {
+        "mustInclude": ["Partner A: $9,000 loss", "Partner B: $6,000 loss", "capital ratio"],
+        "shouldMention": ["60:40 ratio", "losses by capital contribution", "not profit ratio"],
+        "accuracy": "Should calculate loss by capital ratio (60% and 40%)"
+      }
+    },
+    {
+      "id": "CA003",
+      "category": "calculation",
+      "question": "In a Mudharabah contract, investor provides $100,000 capital. Profit is $30,000 with 60-40 split (investor-entrepreneur). How is profit distributed?",
+      "expectedAnswer": {
+        "mustInclude": ["Investor: $18,000", "Entrepreneur: $12,000", "60-40 split"],
+        "shouldMention": ["profit sharing", "agreed ratio"],
+        "accuracy": "Should calculate 60% and 40% of $30,000 profit"
+      }
+    },
+    {
+      "id": "CA004",
+      "category": "calculation",
+      "question": "In the same Mudharabah from CA003, if there's a $20,000 loss, who bears it?",
+      "expectedAnswer": {
+        "mustInclude": [
+          "Investor bears full loss",
+          "$20,000",
+          "entrepreneur bears no financial loss"
+        ],
+        "shouldMention": ["capital provider risk", "entrepreneur loses effort/time only"],
+        "accuracy": "Should clearly state investor bears 100% of financial loss"
+      }
+    },
+    {
+      "id": "CA005",
+      "category": "calculation",
+      "question": "Three partners form Musharakah: A ($50k), B ($30k), C ($20k). Total capital $100k. Profit $40k distributed equally. Calculate each partner's profit and loss if business loses $25k.",
+      "expectedAnswer": {
+        "mustInclude": [
+          "Profit: A=$13,333, B=$13,333, C=$13,333",
+          "Loss: A=$12,500, B=$7,500, C=$5,000",
+          "equal profit",
+          "proportional loss"
+        ],
+        "shouldMention": ["50:30:20 capital ratio for loss", "33.33% each for profit"],
+        "accuracy": "Should distinguish agreed profit ratio from required capital-based loss ratio"
+      }
+    }
+  ]
+}
