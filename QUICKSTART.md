@@ -4,9 +4,19 @@ Get Islamic Finance Knowledge Assistant running in 5 minutes.
 
 ## Prerequisites
 
+### Local Ollama (Full Setup)
+
 - Docker & Docker Compose installed
 - 16GB RAM minimum
 - 50GB free disk space
+- (Optional) GPU for faster inference
+
+### Cloud Ollama (Lightweight)
+
+- Docker & Docker Compose installed
+- 4GB RAM minimum
+- 10GB free disk space
+- Ollama Cloud API key
 
 ## 1. Setup Environment
 
@@ -74,7 +84,9 @@ docker-compose restart
 make health
 ```
 
-## CPU-only Systems (No GPU)
+## Alternative Deployments
+
+### CPU-only (No GPU)
 
 ```bash
 # Use CPU-only configuration
@@ -83,6 +95,33 @@ docker-compose -f docker-compose.yml -f docker-compose.cpu.yml up -d
 # Or with make
 make up-cpu
 ```
+
+### Cloud Ollama (Hybrid - Recommended for Limited Resources)
+
+Hybrid approach using cloud for chat + local for embeddings:
+
+```bash
+# 1. Update .env with cloud settings
+# OLLAMA_CLOUD_URL=https://api.ollama.ai
+# OLLAMA_CLOUD_API_KEY=your-api-key
+# OLLAMA_CLOUD_MODEL=llama3.1:8b
+
+# 2. Start with cloud Ollama
+make bootstrap-cloud
+
+# Or manual
+docker-compose -f docker-compose.yml -f docker-compose.cloud.yml up -d
+./scripts/init-ollama-embeddings.sh
+```
+
+**Architecture**:
+
+- Chat model: Cloud API (llama3.1:8b)
+- Embeddings: Local Ollama (nomic-embed-text ~500MB)
+
+**Benefits**: ~50% less RAM/disk, faster startup, optional GPU
+
+**See**: [CLOUD_OLLAMA.md](./CLOUD_OLLAMA.md) for details
 
 ## Development Mode
 
