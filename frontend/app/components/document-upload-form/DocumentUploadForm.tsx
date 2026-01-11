@@ -1,5 +1,5 @@
 import { useReducer, useRef, useState } from 'react';
-import { Upload, X, FileText } from 'lucide-react';
+import { Upload, X, FileText, Loader2 } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
@@ -130,12 +130,15 @@ export function DocumentUploadForm() {
           dispatch({ type: 'RESET_FORM' });
           if (fileInputRef.current) {
             fileInputRef.current.value = '';
+            // Return focus to file input after successful upload
+            setTimeout(() => fileInputRef.current?.focus(), 100);
           }
         },
-        onError: () => {
+        onError: (error: Error) => {
           toast({
-            title: 'Error',
-            description: 'Failed to upload document. Please try again.',
+            title: 'Upload Failed',
+            description:
+              error.message || 'Unable to upload document. Please check the file and try again.',
             variant: 'destructive',
           });
         },
@@ -172,6 +175,15 @@ export function DocumentUploadForm() {
             ${state.errors.file ? 'border-destructive' : ''}
           `}
           onClick={() => fileInputRef.current?.click()}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Click to upload document or drag and drop"
         >
           <input
             ref={fileInputRef}
@@ -180,6 +192,7 @@ export function DocumentUploadForm() {
             accept={FILE_EXTENSIONS.join(',')}
             onChange={handleFileInputChange}
             className="hidden"
+            aria-label="Upload document file"
           />
 
           {state.file ? (
@@ -285,7 +298,8 @@ export function DocumentUploadForm() {
 
       {/* Submit Button */}
       <Button type="submit" disabled={!isFormValid || uploadMutation.isPending} className="w-full">
-        {uploadMutation.isPending ? 'Uploading...' : 'Upload Document'}
+        {uploadMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {uploadMutation.isPending ? 'Uploading document...' : 'Upload Document'}
       </Button>
     </form>
   );

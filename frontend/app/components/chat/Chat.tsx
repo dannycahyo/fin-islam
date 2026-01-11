@@ -1,6 +1,7 @@
 import { useReducer, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2 } from 'lucide-react';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
 import { Message } from './types';
@@ -75,8 +76,9 @@ export function Chat() {
     return (
       <Card className="flex h-[calc(100vh-12rem)] flex-col">
         <CardContent className="flex h-full items-center justify-center">
-          <div className="text-center text-muted-foreground">
-            <p>Initializing chat...</p>
+          <div className="flex flex-col items-center gap-4 text-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Initializing chat session...</p>
           </div>
         </CardContent>
       </Card>
@@ -87,8 +89,15 @@ export function Chat() {
     return (
       <Card className="flex h-[calc(100vh-12rem)] flex-col">
         <CardContent className="flex h-full items-center justify-center">
-          <div className="text-center text-destructive">
-            <p>Failed to start session. Please refresh the page.</p>
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="rounded-lg border border-destructive bg-destructive/10 p-6">
+              <p className="text-sm font-medium text-destructive">
+                Failed to initialize chat session
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Please refresh the page to try again
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -96,15 +105,17 @@ export function Chat() {
   }
 
   return (
-    <Card className="flex h-[calc(100vh-12rem)] flex-col">
+    <Card className="flex h-[calc(100vh-10rem)] sm:h-[calc(100vh-12rem)] flex-col">
       <CardContent className="flex h-full flex-col p-0">
-        <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
-          <div className="space-y-4">
+        <ScrollArea ref={scrollAreaRef} className="flex-1 p-3 sm:p-4">
+          <div className="space-y-3 sm:space-y-4">
             {isEmpty && (
               <div className="flex justify-center">
-                <div className="rounded-lg bg-muted px-4 py-3 text-center text-sm text-muted-foreground">
-                  <p className="font-medium">Welcome to Islamic Finance Assistant</p>
-                  <p className="mt-1">
+                <div className="rounded-lg bg-muted px-4 py-3 text-center text-sm sm:text-base text-muted-foreground">
+                  <p className="font-semibold text-foreground">
+                    Welcome to Islamic Finance Assistant
+                  </p>
+                  <p className="mt-2 text-sm">
                     Ask me anything about Islamic finance principles and products
                   </p>
                 </div>
@@ -117,7 +128,7 @@ export function Chat() {
 
             {state.error && (
               <div className="flex justify-center">
-                <div className="rounded-lg border border-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                <div className="rounded-lg border border-destructive bg-destructive/10 px-4 py-3 text-sm sm:text-base text-destructive font-medium">
                   {state.error}
                 </div>
               </div>

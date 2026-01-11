@@ -14,10 +14,15 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   const hasError = message.status === 'error';
 
   return (
-    <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start')}>
+    <div
+      className={cn(
+        'flex w-full animate-in fade-in slide-in-from-bottom-4 duration-300',
+        isUser ? 'justify-end' : 'justify-start'
+      )}
+    >
       <div
         className={cn(
-          'max-w-[85%] rounded-lg px-4 py-3 sm:max-w-[75%]',
+          'max-w-[90%] sm:max-w-[85%] md:max-w-[75%] rounded-lg px-3 py-2 sm:px-4 sm:py-3 transition-all duration-200',
           isUser ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground',
           hasError && 'border border-destructive'
         )}
