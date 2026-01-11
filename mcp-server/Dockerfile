@@ -8,7 +8,6 @@ COPY package.json pnpm-lock.yaml ./
 COPY mcp-server/package.json ./mcp-server/
 COPY shared/package.json ./shared/
 
-# Install pnpm
 RUN npm install -g pnpm@9.15.4
 
 # Install dependencies
@@ -28,7 +27,6 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install pnpm
 RUN npm install -g pnpm@9.15.4
 
 # Copy package files

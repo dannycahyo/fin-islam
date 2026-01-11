@@ -3,12 +3,10 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
 COPY package.json pnpm-lock.yaml ./
 COPY backend/package.json ./backend/
 COPY shared/package.json ./shared/
 
-# Install pnpm
 RUN npm install -g pnpm@9.15.4
 
 # Install dependencies
@@ -28,10 +26,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install pnpm
 RUN npm install -g pnpm@9.15.4
 
-# Copy package files
 COPY package.json pnpm-lock.yaml ./
 COPY backend/package.json ./backend/
 COPY shared/package.json ./shared/
@@ -52,7 +48,6 @@ USER node
 
 WORKDIR /app/backend
 
-# Expose port
 EXPOSE 3001
 
 # Health check

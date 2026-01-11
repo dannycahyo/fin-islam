@@ -3,12 +3,10 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
 COPY package.json pnpm-lock.yaml ./
 COPY frontend/package.json ./frontend/
 COPY shared/package.json ./shared/
 
-# Install pnpm
 RUN npm install -g pnpm@9.15.4
 
 # Install dependencies
@@ -19,7 +17,6 @@ COPY frontend ./frontend
 COPY shared ./shared
 COPY tsconfig.base.json ./
 
-# Build frontend
 WORKDIR /app/frontend
 RUN pnpm build
 
@@ -32,7 +29,6 @@ COPY --from=builder /app/frontend/dist /usr/share/nginx/html
 # Copy nginx config
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port
 EXPOSE 80
 
 # Health check
