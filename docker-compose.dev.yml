@@ -1,0 +1,47 @@
+version: '3.8'
+
+# Development override - use with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  backend:
+    build:
+      target: builder  # Use builder stage for dev
+    command: pnpm dev
+    volumes:
+      - ./backend:/app/backend
+      - ./shared:/app/shared
+      - /app/backend/node_modules
+      - /app/shared/node_modules
+    environment:
+      NODE_ENV: development
+
+  frontend:
+    build:
+      target: builder
+    command: pnpm dev
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend:/app/frontend
+      - ./shared:/app/shared
+      - /app/frontend/node_modules
+      - /app/shared/node_modules
+    environment:
+      NODE_ENV: development
+
+  mcp-server:
+    build:
+      target: builder
+    command: pnpm dev
+    volumes:
+      - ./mcp-server:/app/mcp-server
+      - ./shared:/app/shared
+      - /app/mcp-server/node_modules
+      - /app/shared/node_modules
+    environment:
+      NODE_ENV: development
+
+  # Expose PostgreSQL for local development
+  postgres:
+    ports:
+      - '5432:5432'

@@ -1,0 +1,12 @@
+version: '3.8'
+
+# Override file for CPU-only systems (no GPU)
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.cpu.yml up -d
+
+services:
+  ollama:
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
