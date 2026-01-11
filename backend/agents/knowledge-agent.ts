@@ -129,14 +129,30 @@ export class KnowledgeAgent {
       // Step 2: Retrieve top 5 chunks
       const retrievedChunks = await this.retrieveChunks(queryEmbedding, category);
 
-      // Step 3: Re-rank to top 3
+      // Step 3: Handle no documents - provide general response
+      if (retrievedChunks.length === 0) {
+        const answer = await this.generateGeneralAnswerStreaming(query, streamCallback);
+        return {
+          answer,
+          sources: [],
+          confidence: 0,
+          category,
+        };
+      }
+
+      // Step 4: Re-rank to top 3
       const rerankedChunks = this.rerankChunks(retrievedChunks);
 
-      // Step 4: Calculate confidence
+      // Step 5: Calculate confidence
       const confidence = this.calculateConfidence(rerankedChunks);
 
-      // Step 5: Check confidence threshold
+      // Step 6: Check confidence threshold
       if (confidence < this.confidenceThreshold) {
+        console.log('[KNOWLEDGE] Low confidence, using fallback', {
+          category,
+          confidence,
+          threshold: this.confidenceThreshold,
+        });
         const fallbackAnswer =
           "I don't have enough information to answer that question accurately. The available context may not contain sufficient relevant information.";
         streamCallback(fallbackAnswer);
@@ -152,10 +168,10 @@ export class KnowledgeAgent {
         };
       }
 
-      // Step 6: Assemble context
+      // Step 7: Assemble context
       const context = this.assembleContext(rerankedChunks);
 
-      // Step 7: Generate answer with streaming
+      // Step 8: Generate answer with streaming
       const answer = await this.generateAnswerStreaming(query, context, streamCallback);
 
       return {
@@ -180,10 +196,6 @@ export class KnowledgeAgent {
       threshold: 0.5, // Minimum similarity for retrieval
       filters: { category },
     });
-
-    if (results.length === 0) {
-      throw new KnowledgeAgentError('No relevant documents found for the query', 'NO_RESULTS');
-    }
 
     return results;
   }
@@ -229,6 +241,28 @@ export class KnowledgeAgent {
   ): Promise<string> {
     const prompt = this.promptBuilder.buildPrompt({ query, context });
     const stream = await this.client.stream(prompt);
+
+    let fullAnswer = '';
+    for await (const chunk of stream) {
+      const content = typeof chunk.content === 'string' ? chunk.content : String(chunk.content);
+      fullAnswer += content;
+      streamCallback(content);
+    }
+
+    return fullAnswer.trim();
+  }
+
+  private async generateGeneralAnswerStreaming(
+    query: string,
+    streamCallback: (chunk: string) => void
+  ): Promise<string> {
+    const generalPrompt = `You are a helpful assistant specializing in Islamic finance. Answer the following question in a friendly and helpful manner:
+
+Question: ${query}
+
+Provide a concise and helpful response.`;
+
+    const stream = await this.client.stream(generalPrompt);
 
     let fullAnswer = '';
     for await (const chunk of stream) {
