@@ -36,13 +36,13 @@ export function DocumentList() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs sm:text-sm text-muted-foreground font-medium">
           {data.total} {data.total === 1 ? 'document' : 'documents'}
         </p>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-2 sm:space-y-3">
         {data.documents.map((document) => (
           <DocumentCard key={document.id} document={document} />
         ))}

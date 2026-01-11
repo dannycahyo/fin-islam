@@ -13,22 +13,30 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Skip to main content link for keyboard navigation */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-md focus:ring-2 focus:ring-ring"
+      >
+        Skip to main content
+      </a>
+
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <div className="mr-4 flex">
-            <Link to="/" className="mr-6 flex items-center space-x-2">
-              <MessageSquare className="h-6 w-6 text-primary" />
-              <span className="hidden font-bold sm:inline-block">
+        <div className="container flex h-14 sm:h-16 items-center px-4 sm:px-6">
+          <div className="mr-2 sm:mr-4 flex">
+            <Link to="/" className="mr-4 sm:mr-6 flex items-center space-x-2">
+              <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <span className="hidden font-bold sm:inline-block text-sm sm:text-base">
                 Islamic Finance Assistant
               </span>
             </Link>
           </div>
-          <nav className="flex flex-1 items-center justify-end space-x-6 text-sm font-medium">
+          <nav className="flex flex-1 items-center justify-end space-x-4 sm:space-x-6 text-xs sm:text-sm font-medium">
             <Link
               to="/"
               className={cn(
-                'transition-colors hover:text-foreground/80',
+                'transition-all duration-200 hover:text-foreground/80 hover:scale-105',
                 isActive('/') ? 'text-foreground' : 'text-foreground/60'
               )}
             >
@@ -37,7 +45,7 @@ export function Layout({ children }: LayoutProps) {
             <Link
               to="/admin"
               className={cn(
-                'flex items-center gap-2 transition-colors hover:text-foreground/80',
+                'flex items-center gap-2 transition-all duration-200 hover:text-foreground/80 hover:scale-105',
                 isActive('/admin') ? 'text-foreground' : 'text-foreground/60'
               )}
             >
@@ -49,12 +57,14 @@ export function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Main content */}
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1" tabIndex={-1}>
+        {children}
+      </main>
 
       {/* Footer */}
-      <footer className="border-t py-6 md:py-0">
-        <div className="container flex items-center justify-center md:h-14">
-          <p className="text-center text-sm leading-loose text-muted-foreground">
+      <footer className="border-t py-4 sm:py-6 md:py-0">
+        <div className="container flex items-center justify-center md:h-14 px-4">
+          <p className="text-center text-xs sm:text-sm leading-loose text-muted-foreground">
             Built for learning Islamic finance principles. Not financial advice.
           </p>
         </div>

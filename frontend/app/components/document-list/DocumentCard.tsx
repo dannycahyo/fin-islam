@@ -45,11 +45,12 @@ export function DocumentCard({ document }: DocumentCardProps) {
           description: `${document.title} has been deleted successfully.`,
         });
         setDeleteDialogOpen(false);
+        // Focus will naturally return to the next focusable element
       },
       onError: (error) => {
         toast({
-          title: 'Delete failed',
-          description: error.message,
+          title: 'Delete Failed',
+          description: error.message || 'Unable to delete document. Please try again.',
           variant: 'destructive',
         });
       },
@@ -58,19 +59,21 @@ export function DocumentCard({ document }: DocumentCardProps) {
 
   return (
     <>
-      <div className="flex items-start gap-4 rounded-lg border p-4">
+      <div className="flex items-start gap-3 sm:gap-4 rounded-lg border p-3 sm:p-4 transition-all duration-200 hover:shadow-md hover:border-primary/20">
         <div className="flex-shrink-0">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
             <FileText className="h-5 w-5 text-muted-foreground" />
           </div>
         </div>
 
-        <div className="flex-1 space-y-1">
+        <div className="flex-1 space-y-2">
           <div className="flex items-start justify-between gap-2">
             <div className="space-y-1">
-              <h3 className="font-semibold leading-none">{document.title}</h3>
+              <h3 className="font-semibold leading-none text-sm sm:text-base">{document.title}</h3>
               {document.description && (
-                <p className="text-sm text-muted-foreground">{document.description}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
+                  {document.description}
+                </p>
               )}
             </div>
             <Button
@@ -78,6 +81,7 @@ export function DocumentCard({ document }: DocumentCardProps) {
               size="icon"
               onClick={() => setDeleteDialogOpen(true)}
               disabled={isDeleting}
+              aria-label={`Delete ${document.title}`}
             >
               {isDeleting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -87,7 +91,7 @@ export function DocumentCard({ document }: DocumentCardProps) {
             </Button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-muted-foreground">
             <Badge variant={STATUS_VARIANTS[document.status]}>
               {STATUS_LABELS[document.status]}
             </Badge>

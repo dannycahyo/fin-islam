@@ -5,12 +5,14 @@ import { DocumentList } from '~/components/document-list';
 
 export default function AdminPage() {
   return (
-    <div className="container py-6">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="container px-4 py-4 sm:px-6 sm:py-6 md:py-8">
+      <div className="mx-auto max-w-6xl space-y-4 sm:space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage knowledge base documents</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">
+            Manage knowledge base documents
+          </p>
         </div>
 
         <Separator />
