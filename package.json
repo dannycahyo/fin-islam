@@ -30,6 +30,7 @@
     "test:backend": "pnpm --filter backend test",
     "test:frontend": "pnpm --filter frontend test",
     "test:mcp": "pnpm --filter mcp-server test",
+    "test:integration": "pnpm --filter backend test:integration",
     "test:watch": "pnpm -r test:watch",
     "test:coverage": "pnpm -r test:coverage",
     "test:accuracy": "tsx tests/run-accuracy-test.ts",

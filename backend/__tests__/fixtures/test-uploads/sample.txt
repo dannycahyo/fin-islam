@@ -1,0 +1,23 @@
+Islamic Finance Principles
+
+Islamic finance is a financial system that operates according to Islamic law (Shariah). The key principles include:
+
+1. Prohibition of Riba (Interest): Charging or paying interest is strictly forbidden in Islamic finance. This is based on the belief that money should not generate income by itself.
+
+2. Risk Sharing: Islamic finance promotes risk-sharing between parties. Both the lender and borrower share the profits and losses of an investment.
+
+3. Asset-Backed Financing: All financial transactions must be backed by tangible assets or services. Speculative transactions are prohibited.
+
+4. Ethical Investments: Investments in businesses dealing with alcohol, gambling, pork, or other prohibited activities are not allowed.
+
+5. Transparency: All transactions must be transparent and clear to all parties involved.
+
+Common Islamic Financial Instruments:
+
+- Murabaha: A cost-plus-profit arrangement where the seller discloses the cost and profit margin.
+- Mudaraba: A profit-sharing partnership where one party provides capital and the other provides expertise.
+- Musharaka: A joint venture where all parties contribute capital and share profits and losses.
+- Sukuk: Islamic bonds that represent ownership in tangible assets rather than debt obligations.
+- Ijara: An Islamic leasing arrangement similar to conventional leasing.
+
+These principles ensure that Islamic finance promotes economic justice, transparency, and ethical business practices.
