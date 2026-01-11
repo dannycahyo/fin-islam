@@ -22,8 +22,12 @@ export class DocumentService {
     return this.documentRepo.findById(id);
   }
 
-  async listDocuments(category?: string): Promise<Document[]> {
-    return category ? this.documentRepo.findByCategory(category) : this.documentRepo.findAll();
+  async listDocuments(
+    category?: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{ documents: Document[]; total: number }> {
+    return this.documentRepo.findPaginated({ category, page, limit });
   }
 
   async deleteDocument(id: string): Promise<void> {

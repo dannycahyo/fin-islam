@@ -21,10 +21,19 @@ export interface UploadDocumentParams {
 }
 
 export const documentsApi = {
-  async getAll(category?: DocumentCategory): Promise<DocumentListResponse> {
+  async getAll(
+    category?: DocumentCategory,
+    page?: number,
+    limit?: number
+  ): Promise<DocumentListResponse> {
+    const params: Record<string, string> = {};
+    if (category) params.category = category;
+    if (page) params.page = String(page);
+    if (limit) params.limit = String(limit);
+
     return fetcher('/api/documents', {
       schema: DocumentListResponseSchema,
-      params: category ? { category } : undefined,
+      params: Object.keys(params).length > 0 ? params : undefined,
     });
   },
 

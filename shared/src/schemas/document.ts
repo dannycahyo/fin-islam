@@ -25,11 +25,16 @@ export const DocumentParamSchema = z.object({
 
 export const ListDocumentsQuerySchema = z.object({
   category: DocumentCategoryEnum.optional(),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(10),
 });
 
 export const DocumentListResponseSchema = z.object({
   documents: z.array(DocumentSchema),
   total: z.number(),
+  page: z.number(),
+  limit: z.number(),
+  totalPages: z.number(),
 });
 
 export const DeleteDocumentResponseSchema = z.object({
