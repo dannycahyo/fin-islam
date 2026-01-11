@@ -1,12 +1,15 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import { db } from './db/config';
 import { sql } from 'drizzle-orm';
 import { documentRoutes, searchRoutes } from './routes';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 export const app = new Hono();
 
