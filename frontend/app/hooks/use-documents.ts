@@ -4,10 +4,17 @@ import type { DocumentCategory } from 'shared';
 
 export const DOCUMENTS_QUERY_KEY = 'documents';
 
-export function useDocuments(category?: DocumentCategory) {
+interface UseDocumentsParams {
+  category?: DocumentCategory;
+  page?: number;
+  limit?: number;
+}
+
+export function useDocuments(params?: UseDocumentsParams) {
+  const { category, page = 1, limit = 10 } = params || {};
   return useQuery({
-    queryKey: [DOCUMENTS_QUERY_KEY, category],
-    queryFn: () => documentsApi.getAll(category),
+    queryKey: [DOCUMENTS_QUERY_KEY, category, page, limit],
+    queryFn: () => documentsApi.getAll(category, page, limit),
   });
 }
 

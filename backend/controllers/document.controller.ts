@@ -135,12 +135,21 @@ export class DocumentController {
 
   async listDocuments(c: Context) {
     try {
-      const { category } = ListDocumentsQuerySchema.parse({
+      const { category, page, limit } = ListDocumentsQuerySchema.parse({
         category: c.req.query('category'),
+        page: c.req.query('page'),
+        limit: c.req.query('limit'),
       });
-      const documents = await this.documentService.listDocuments(category);
+      const result = await this.documentService.listDocuments(category, page, limit);
+      const totalPages = Math.ceil(result.total / limit);
 
-      return c.json({ documents, total: documents.length });
+      return c.json({
+        documents: result.documents,
+        total: result.total,
+        page,
+        limit,
+        totalPages,
+      });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return c.json(
