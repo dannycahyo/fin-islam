@@ -34,56 +34,60 @@ export class SearchController {
    * Process query with SSE streaming
    */
   async search(c: Context) {
-    return stream(c, async (stream) => {
-      try {
-        const body = await c.req.json();
-        const { query, sessionId: inputSessionId } = QueryInputSchema.parse(body);
+    try {
+      const body = await c.req.json();
+      const { query, sessionId: inputSessionId } = QueryInputSchema.parse(body);
 
-        const session = this.sessionStore.getOrCreateSession(inputSessionId);
-        const sessionId = session.sessionId;
+      const session = this.sessionStore.getOrCreateSession(inputSessionId);
+      const sessionId = session.sessionId;
 
-        c.header('Content-Type', 'text/event-stream');
-        c.header('Cache-Control', 'no-cache');
-        c.header('Connection', 'keep-alive');
+      return stream(c, async (stream) => {
+        try {
+          await stream.writeln(`event: connected\ndata: ${JSON.stringify({ sessionId })}\n`);
 
-        await stream.writeln(`event: connected\ndata: ${JSON.stringify({ sessionId })}\n`);
+          const result = await this.orchestrator.processQuery(query, sessionId, async (event) => {
+            const eventData = JSON.stringify(event.data);
+            await stream.writeln(`event: ${event.type}\ndata: ${eventData}\n`);
+          });
 
-        const result = await this.orchestrator.processQuery(query, sessionId, async (event) => {
-          const eventData = JSON.stringify(event.data);
-          await stream.writeln(`event: ${event.type}\ndata: ${eventData}\n`);
-        });
+          await stream.writeln(`event: done\ndata: ${JSON.stringify(result)}\n`);
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            const errorData = {
+              message: 'Validation failed',
+              code: 'VALIDATION_ERROR',
+              details: error.errors.map((e) => ({
+                field: e.path.join('.') || 'root',
+                message: e.message,
+              })),
+            };
+            await stream.writeln(`event: error\ndata: ${JSON.stringify(errorData)}\n`);
+          } else if (error instanceof AgentOrchestratorError) {
+            const errorData = {
+              message: error.message,
+              code: error.code,
+              step: error.step,
+            };
+            await stream.writeln(`event: error\ndata: ${JSON.stringify(errorData)}\n`);
+          } else {
+            const errorData = {
+              message: error instanceof Error ? error.message : 'Unknown error',
+              code: 'UNKNOWN_ERROR',
+            };
+            await stream.writeln(`event: error\ndata: ${JSON.stringify(errorData)}\n`);
+          }
 
-        await stream.writeln(`event: done\ndata: ${JSON.stringify(result)}\n`);
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          const errorData = {
-            message: 'Validation failed',
-            code: 'VALIDATION_ERROR',
-            details: error.errors.map((e) => ({
-              field: e.path.join('.') || 'root',
-              message: e.message,
-            })),
-          };
-          await stream.writeln(`event: error\ndata: ${JSON.stringify(errorData)}\n`);
-        } else if (error instanceof AgentOrchestratorError) {
-          const errorData = {
-            message: error.message,
-            code: error.code,
-            step: error.step,
-          };
-          await stream.writeln(`event: error\ndata: ${JSON.stringify(errorData)}\n`);
-        } else {
-          const errorData = {
-            message: error instanceof Error ? error.message : 'Unknown error',
-            code: 'UNKNOWN_ERROR',
-          };
-          await stream.writeln(`event: error\ndata: ${JSON.stringify(errorData)}\n`);
+          console.error('Orchestrator error:', error);
+        } finally {
+          await stream.close();
         }
-
-        console.error('Orchestrator error:', error);
-      } finally {
-        await stream.close();
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return c.json({ error: 'Validation failed', details: error.errors }, 400);
       }
-    });
+      console.error('Search endpoint error:', error);
+      return c.json({ error: 'Internal server error' }, 500);
+    }
   }
 }
