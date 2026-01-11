@@ -19,6 +19,9 @@ export class CompliancePromptBuilder extends BasePromptBuilder<string> {
     return `You are a Shariah compliance validator for Islamic finance responses.
 Your role is to validate that responses are compliant with Islamic principles.
 
+CRITICAL: In Musharakah partnerships, profit-sharing ratios can be ANY agreed ratio, even if different from capital ratios. This is VALID and COMPLIANT.
+Example: 60% capital + 50% profit share = COMPLIANT (partners can agree to any profit ratio)
+
 You validate responses ONLY - you do not generate new responses.
 If compliant, return COMPLIANT. If violations found, return FLAGGED with details.`;
   }
@@ -49,7 +52,17 @@ If compliant, return COMPLIANT. If violations found, return FLAGGED with details
 5. ACCURATE ISLAMIC CONCEPTS
    - Islamic principles explained correctly
    - No factual errors about Shariah rulings
-   - Proper distinction between halal/haram`;
+   - Proper distinction between halal/haram
+
+   IMPORTANT MUSHARAKAH RULES:
+   - Profit ratios CAN be ANY agreed ratio (e.g., 50-50, 60-40, 70-30)
+   - Profit ratios DO NOT need to match capital contribution ratios
+   - Partners may agree 60% capital + 50% profit = VALID
+   - Loss ratios MUST match capital contribution ratios
+
+   IMPORTANT MUDHARABAH RULES:
+   - Loss is borne ONLY by capital provider
+   - Entrepreneur loses time/effort only`;
   }
 
   protected buildOutputFormat(): string {
@@ -136,8 +149,20 @@ FLAGGED|0.88|Response normalizes interest-based loans|Promotes riba,Misleading t
       },
       {
         input:
-          'Musharakah profit-sharing: Partner A invested $60k, Partner B $40k. From $100k profit: Partner A gets $60k, Partner B gets $40k.',
+          'Musharakah profit-sharing: Partner A invested $60k (60%), Partner B $40k (40%). From $100k profit: Partner A gets $60k, Partner B gets $40k.',
         output: 'COMPLIANT|0.94|Correct Musharakah calculation based on capital ratio|NONE|NONE',
+      },
+      {
+        input:
+          'Musharakah profit-sharing: Partner A invested $60k, Partner B $40k. They agreed to 50-50 profit split. From $20k profit: each partner gets $10k.',
+        output:
+          'COMPLIANT|0.95|Valid Musharakah with agreed profit ratio different from capital ratio|NONE|NONE',
+      },
+      {
+        input:
+          'Partner A contributes $60,000 (60% capital). Partner B contributes $40,000 (40% capital). Agreed profit sharing 50-50. Total profit $20,000. Partner A receives $10,000. Partner B receives $10,000.',
+        output:
+          'COMPLIANT|0.97|Correct Musharakah with valid profit-sharing agreement independent of capital ratios|NONE|NONE',
       },
       {
         input:
