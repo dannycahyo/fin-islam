@@ -1,0 +1,35 @@
+version: '3.8'
+
+# Override for cloud-hosted Ollama with local embeddings
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.cloud.yml up -d
+#
+# Cloud LLM for chat/completion + Local Ollama for embeddings only
+
+services:
+  # Keep Ollama running but only for embeddings
+  ollama:
+    # Use same config as base but we'll only pull embedding model
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+
+  # Add separate service for cloud Ollama (optional - for clarity)
+  # Backend will use OLLAMA_CLOUD_URL for chat and OLLAMA_BASE_URL for embeddings
+
+  # Update backend to use cloud Ollama for chat, local for embeddings
+  backend:
+    environment:
+      # Cloud Ollama for chat/completion
+      OLLAMA_CLOUD_URL: ${OLLAMA_CLOUD_URL:-https://api.ollama.ai}
+      OLLAMA_CLOUD_API_KEY: ${OLLAMA_CLOUD_API_KEY}
+      OLLAMA_CLOUD_MODEL: ${OLLAMA_CLOUD_MODEL:-llama3.1:8b}
+
+      # Local Ollama for embeddings only
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+
+      # Keep for backward compatibility
+      OLLAMA_MODEL: ${OLLAMA_CLOUD_MODEL:-llama3.1:8b}
+      OLLAMA_API_KEY: ${OLLAMA_CLOUD_API_KEY}
