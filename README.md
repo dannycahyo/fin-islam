@@ -246,104 +246,6 @@ islamic-finance-assistant/
 └── package.json              # Root workspace config
 ```
 
-## Available Scripts
-
-### Root Level
-
-```bash
-pnpm dev              # Start all services
-pnpm build            # Build all packages
-pnpm lint             # Lint all packages
-pnpm format           # Format code with Prettier
-pnpm typecheck        # Type check all packages
-pnpm clean            # Clean all node_modules and build outputs
-```
-
-### Frontend
-
-```bash
-pnpm dev:frontend     # Start Vite dev server
-pnpm build:frontend   # Build for production
-```
-
-### Backend
-
-```bash
-pnpm dev:backend      # Start backend with hot reload
-pnpm build:backend    # Compile TypeScript
-pnpm db:generate      # Generate Drizzle schema
-pnpm db:migrate       # Run database migrations
-pnpm db:studio        # Open Drizzle Studio
-```
-
-### MCP Server
-
-```bash
-pnpm dev:mcp          # Start MCP server
-pnpm build:mcp        # Build MCP server
-```
-
-## Development Workflow
-
-### Local Development
-
-1. **Start PostgreSQL**: `docker-compose up -d`
-2. **Start Ollama**: `ollama serve` (in separate terminal)
-3. **Start all services**: `pnpm dev`
-4. **Open browser**: Navigate to http://localhost:3000
-5. **Access admin**: Upload documents via admin dashboard
-6. **Test chat**: Ask Islamic finance questions
-
-### Production Testing
-
-1. **Configure**: `cp .env.prod.example .env.prod` and edit
-2. **Build & Start**: `docker compose -f docker-compose.prod.yml up -d --build`
-3. **Open browser**: Navigate to http://localhost
-4. **View logs**: `docker compose -f docker-compose.prod.yml logs -f`
-
-## Configuration
-
-### Environment Files
-
-| File                | Purpose                             |
-| ------------------- | ----------------------------------- |
-| `.env.dev.example`  | Development template (local Ollama) |
-| `.env.prod.example` | Production template (containerized) |
-| `.env`              | Your local config (gitignored)      |
-| `.env.prod`         | Your production config (gitignored) |
-
-### Database
-
-**Development** (local Docker):
-
-```env
-DATABASE_URL=postgres://finislam:devpassword@localhost:5432/islamic_finance
-```
-
-**Production** (internal network):
-
-```env
-DATABASE_URL=postgres://finislam:password@postgres:5432/islamic_finance
-```
-
-### Ollama
-
-**Development** (local):
-
-```env
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.1:8b
-```
-
-**Production** (cloud + local):
-
-```env
-OLLAMA_CLOUD_URL=https://ollama.com
-OLLAMA_BASE_URL=http://ollama:11434
-OLLAMA_MODEL=gpt-oss:120b-cloud
-OLLAMA_API_KEY=your-api-key
-```
-
 ## Architecture
 
 ### Multi-Agent System
@@ -371,27 +273,11 @@ User Query → Routing Agent → [Knowledge/Calculation Agent] → Compliance Ag
 5. Click Upload
 6. Document will be processed, chunked, embedded, and indexed
 
-## Docker Commands
-
-```bash
-# Development (PostgreSQL only)
-docker-compose up -d
-docker-compose down
-
-# Production (full stack)
-docker compose -f docker-compose.prod.yml up -d --build
-docker compose -f docker-compose.prod.yml down
-docker compose -f docker-compose.prod.yml logs -f backend
-
-# Reset production data
-docker compose -f docker-compose.prod.yml down -v
-```
-
 ## SSL/HTTPS
 
 For production HTTPS, use one of:
 
-- Cloudflare Tunnel (recommended)
+- Cloudflare Tunnel
 - nginx-proxy with Let's Encrypt
 - External load balancer (AWS ALB, etc.)
 
