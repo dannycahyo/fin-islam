@@ -5,7 +5,14 @@ import type { ChatAction } from '~/components/chat/types';
 import type { SSEEvent } from 'shared';
 import { mapErrorToMessage } from '~/utils/error-messages';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
+function getBaseUrl(): string {
+  if (API_BASE_URL && API_BASE_URL.startsWith('http')) {
+    return API_BASE_URL;
+  }
+  return typeof window !== 'undefined' ? window.location.origin : '';
+}
 
 export function useChatStream(dispatch: Dispatch<ChatAction>) {
   const sseClientRef = useRef<SSEClient | null>(null);
@@ -18,7 +25,7 @@ export function useChatStream(dispatch: Dispatch<ChatAction>) {
 
       // Create SSE client
       sseClientRef.current = new SSEClient({
-        url: `${API_BASE_URL}/api/search`,
+        url: `${getBaseUrl()}/api/search`,
         body: { query, sessionId },
         maxRetries: 3,
         retryDelays: [1000, 2000, 4000],
