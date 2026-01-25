@@ -11,45 +11,41 @@ COPY mcp-server/package.json ./mcp-server/
 COPY shared/package.json ./shared/
 RUN pnpm install --frozen-lockfile --filter backend --filter mcp-server --filter shared
 
-# Build stage
+# Build stage (only for mcp-server which needs compilation)
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/backend/node_modules ./backend/node_modules
 COPY --from=deps /app/mcp-server/node_modules ./mcp-server/node_modules
 COPY --from=deps /app/shared/node_modules ./shared/node_modules
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY backend ./backend
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
 COPY mcp-server ./mcp-server
 COPY shared ./shared
 
-WORKDIR /app/backend
-RUN pnpm build
 WORKDIR /app/mcp-server
 RUN pnpm build
 
 # Production stage
 FROM node:20-alpine AS production
 RUN corepack enable && corepack prepare pnpm@9 --activate
+RUN apk add --no-cache postgresql-client
 WORKDIR /app
 
 # Copy package files
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
 COPY backend/package.json ./backend/
 COPY mcp-server/package.json ./mcp-server/
 COPY shared/package.json ./shared/
 
-# Install all dependencies (need drizzle-kit for migrations)
+# Install all dependencies (need drizzle-kit for migrations, tsx for runtime)
 RUN pnpm install --frozen-lockfile --filter backend --filter mcp-server --filter shared
 
-# Copy built files
-COPY --from=build /app/backend/dist ./backend/dist
-COPY --from=build /app/mcp-server/dist ./mcp-server/dist
-COPY --from=build /app/shared ./shared
+# Copy backend source (tsx runs TS directly)
+COPY backend ./backend
 
-# Copy drizzle config and migrations
-COPY backend/drizzle.config.ts ./backend/
-COPY backend/db/migrations ./backend/db/migrations
-COPY backend/db/schema.ts ./backend/db/schema.ts
+# Copy mcp-server built files
+COPY --from=build /app/mcp-server/dist ./mcp-server/dist
+
+# Copy shared source
+COPY shared ./shared
 
 # Copy entrypoint
 COPY docker/entrypoint.sh /entrypoint.sh
@@ -69,6 +65,6 @@ ENV PORT=3001
 EXPOSE 3001
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/health || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3001/health || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]

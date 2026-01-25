@@ -35,6 +35,11 @@ coverage
 **/*.spec.ts
 tests
 **/__tests__
+**/vitest*.ts
+**/vitest*.js
+
+# TypeScript incremental build cache
+**/*.tsbuildinfo
 
 # Documentation
 *.md
