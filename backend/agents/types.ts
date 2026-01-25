@@ -69,6 +69,7 @@ export interface ComplianceResult {
 export interface ComplianceAgentConfig {
   baseUrl?: string;
   model?: string;
+  apiKey?: string;
   maxRetries?: number;
   temperature?: number;
   confidenceThreshold?: number;

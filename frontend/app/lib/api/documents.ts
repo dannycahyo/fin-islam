@@ -11,7 +11,14 @@ import {
 } from 'shared';
 import { fetcher, FetchError } from '../fetcher';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
+function getBaseUrl(): string {
+  if (API_BASE_URL && API_BASE_URL.startsWith('http')) {
+    return API_BASE_URL;
+  }
+  return typeof window !== 'undefined' ? window.location.origin : '';
+}
 
 export interface UploadDocumentParams {
   file: File;
@@ -59,7 +66,7 @@ export const documentsApi = {
       formData.append('description', params.description);
     }
 
-    const url = new URL('/api/documents', API_BASE_URL);
+    const url = new URL('/api/documents', getBaseUrl());
     const response = await fetch(url.toString(), {
       method: 'POST',
       body: formData,

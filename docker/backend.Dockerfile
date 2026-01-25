@@ -1,0 +1,70 @@
+# Multi-stage build for backend + mcp-server
+FROM node:20-alpine AS base
+RUN corepack enable && corepack prepare pnpm@9 --activate
+WORKDIR /app
+
+# Dependencies stage
+FROM base AS deps
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY backend/package.json ./backend/
+COPY mcp-server/package.json ./mcp-server/
+COPY shared/package.json ./shared/
+RUN pnpm install --frozen-lockfile --filter backend --filter mcp-server --filter shared
+
+# Build stage (only for mcp-server which needs compilation)
+FROM base AS build
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/mcp-server/node_modules ./mcp-server/node_modules
+COPY --from=deps /app/shared/node_modules ./shared/node_modules
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
+COPY mcp-server ./mcp-server
+COPY shared ./shared
+
+WORKDIR /app/mcp-server
+RUN pnpm build
+
+# Production stage
+FROM node:20-alpine AS production
+RUN corepack enable && corepack prepare pnpm@9 --activate
+RUN apk add --no-cache postgresql-client
+WORKDIR /app
+
+# Copy package files
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
+COPY backend/package.json ./backend/
+COPY mcp-server/package.json ./mcp-server/
+COPY shared/package.json ./shared/
+
+# Install all dependencies (need drizzle-kit for migrations, tsx for runtime)
+RUN pnpm install --frozen-lockfile --filter backend --filter mcp-server --filter shared
+
+# Copy backend source (tsx runs TS directly)
+COPY backend ./backend
+
+# Copy mcp-server built files
+COPY --from=build /app/mcp-server/dist ./mcp-server/dist
+
+# Copy shared source
+COPY shared ./shared
+
+# Copy entrypoint
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Create uploads directory and non-root user
+RUN mkdir -p /app/uploads && \
+    addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
+
+USER nodejs
+
+ENV NODE_ENV=production
+ENV PORT=3001
+
+EXPOSE 3001
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3001/health || exit 1
+
+ENTRYPOINT ["/entrypoint.sh"]

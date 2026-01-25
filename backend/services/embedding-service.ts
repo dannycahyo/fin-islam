@@ -20,6 +20,7 @@ export class EmbeddingServiceError extends Error {
 export interface EmbeddingServiceConfig {
   baseUrl?: string;
   model?: string;
+  apiKey?: string;
   maxRetries?: number;
   batchSize?: number;
 }
@@ -37,13 +38,20 @@ export class EmbeddingService {
     const {
       baseUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
       model = process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
+      apiKey = process.env.OLLAMA_API_KEY,
       maxRetries = 3,
       batchSize = 10,
     } = config;
 
+    const headers: Record<string, string> = {};
+    if (apiKey) {
+      headers['Authorization'] = `Bearer ${apiKey}`;
+    }
+
     this.client = new OllamaEmbeddings({
       baseUrl,
       model,
+      headers: Object.keys(headers).length > 0 ? headers : undefined,
     });
 
     this.maxRetries = maxRetries;

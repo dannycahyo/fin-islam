@@ -1,0 +1,59 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+**/dist
+.vite
+build
+
+# Git
+.git
+.gitignore
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.prod.example
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Test files
+coverage
+**/*.test.ts
+**/*.spec.ts
+tests
+**/__tests__
+**/vitest*.ts
+**/vitest*.js
+
+# TypeScript incremental build cache
+**/*.tsbuildinfo
+
+# Documentation
+*.md
+!README.md
+
+# Docker files (don't need to copy themselves)
+Dockerfile*
+docker-compose*.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.temp
+.cache

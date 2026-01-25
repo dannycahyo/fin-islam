@@ -1,6 +1,13 @@
 import { z } from 'zod';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
+function getBaseUrl(): string {
+  if (API_BASE_URL && API_BASE_URL.startsWith('http')) {
+    return API_BASE_URL;
+  }
+  return typeof window !== 'undefined' ? window.location.origin : '';
+}
 
 export class FetchError extends Error {
   constructor(
@@ -24,7 +31,7 @@ export async function fetcher<TResponse>(
 ): Promise<TResponse> {
   const { schema, params, ...fetchOptions } = options;
 
-  const url = new URL(endpoint, API_BASE_URL);
+  const url = new URL(endpoint, getBaseUrl());
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined) {
