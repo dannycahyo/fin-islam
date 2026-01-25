@@ -48,7 +48,8 @@ COPY --from=build /app/shared ./shared
 
 # Copy drizzle config and migrations
 COPY backend/drizzle.config.ts ./backend/
-COPY backend/drizzle ./backend/drizzle
+COPY backend/db/migrations ./backend/db/migrations
+COPY backend/db/schema.ts ./backend/db/schema.ts
 
 # Copy entrypoint
 COPY docker/entrypoint.sh /entrypoint.sh
