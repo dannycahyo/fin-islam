@@ -1,184 +1,137 @@
 # Islamic Finance Knowledge Assistant
 
-An AI-powered chatbot providing accurate Islamic finance information to Muslims and organizations. Built with modern LLM technologies including RAG, Multi-Agent Systems, MCP, and Open Source LLMs.
+AI-powered chatbot for Islamic finance questions. Features RAG-based knowledge retrieval, multi-agent orchestration, MCP profit calculations, and streaming responses.
 
 ## Features
 
-- **Chat Interface**: Conversational AI assistant for Islamic finance questions
-- **Knowledge Base**: RAG-powered retrieval from 30+ documents on Islamic finance
-- **Profit Calculator**: MCP-based Musharakah & Mudharabah profit-sharing calculations
-- **Multi-Agent System**: Specialized routing, knowledge, calculation, and compliance agents
-- **Streaming Responses**: Real-time token-by-token answer delivery
-- **Admin Dashboard**: Document upload and management interface
-- **Open Source LLM**: Local deployment via Ollama (Llama 3.1)
-- **Vector Search**: Semantic search using pgvector
+- **RAG Knowledge Base**: Vector search over 30+ Islamic finance documents using pgvector (768-dim embeddings)
+- **Multi-Agent System**: Routing → Knowledge/Calculation → Compliance agent pipeline
+- **Profit Calculator**: Musharakah & Mudharabah calculations via MCP
+- **Streaming Chat**: SSE-based token-by-token response delivery
+- **Admin Dashboard**: Document upload with PDF/DOCX/TXT/MD support
+- **Dual LLM Config**: Cloud LLM + local embeddings for production
 
 ## Tech Stack
 
-### Frontend
+| Layer    | Technology                                                               |
+| -------- | ------------------------------------------------------------------------ |
+| Frontend | React 18.3, React Router v7, TanStack Query, XState, Tailwind, shadcn/ui |
+| Backend  | Hono 4.6, Drizzle ORM, Langchain 0.3, @langchain/ollama                  |
+| Database | PostgreSQL 16 + pgvector                                                 |
+| LLM      | Ollama (Llama 3.1 8B), nomic-embed-text embeddings                       |
+| MCP      | @modelcontextprotocol/sdk 1.0                                            |
+| Build    | Vite, TypeScript 5.3, pnpm workspaces                                    |
 
-- React 18.3+ with React Router v7
-- TypeScript 5.3+
-- Tailwind CSS + shadcn/ui
-- XState for state management
-- TanStack Query for server state
-- Vite for build tooling
+## Project Structure
 
-### Backend
-
-- Hono.js web framework
-- PostgreSQL 16+ with pgvector
-- Drizzle ORM
-- Langchain.js for LLM orchestration
-- Ollama for local LLM runtime
-
-### AI/ML
-
-- Llama 3.1 8B (via Ollama)
-- nomic-embed-text for embeddings
-- Multi-agent architecture
-- Model Context Protocol (MCP)
+```
+├── frontend/              # React SPA
+│   ├── app/
+│   │   ├── routes/        # / (chat), /admin
+│   │   ├── components/    # Chat, DocumentUpload
+│   │   ├── hooks/         # use-chat-stream (SSE)
+│   │   └── reducer/       # Chat state (useReducer)
+│   └── vite.config.ts     # Dev server :3000, proxy /api → :3001
+│
+├── backend/               # Hono API server
+│   ├── agents/            # 4-agent system
+│   │   ├── agent-orchestrator.ts
+│   │   ├── routing-agent.ts      # 6 categories
+│   │   ├── knowledge-agent.ts    # RAG pipeline
+│   │   ├── calculation-agent.ts  # MCP client
+│   │   └── compliance-agent.ts   # Shariah validation
+│   ├── services/
+│   │   ├── embedding-service.ts  # nomic-embed-text
+│   │   ├── document-processor.ts # PDF/DOCX/TXT/MD
+│   │   └── chunking-service.ts   # 800 tokens/chunk
+│   ├── repositories/
+│   │   └── chunk.repository.ts   # Vector search (cosine)
+│   └── db/
+│       └── schema.ts             # documents, documentChunks
+│
+├── mcp-server/            # MCP calculation service
+│   ├── src/
+│   │   ├── index.ts              # McpServer + StdioTransport
+│   │   ├── tools/                # calculate_musharakah, calculate_mudharabah
+│   │   └── calculators/          # Business logic
+│   └── package.json
+│
+├── shared/                # Shared Zod schemas
+│   └── src/schemas/
+│
+├── docker/                # Docker configs
+│   ├── backend.Dockerfile        # Multi-stage, tsx runtime
+│   ├── frontend.Dockerfile       # Vite build → nginx
+│   ├── nginx.conf                # /api proxy, SPA routing
+│   ├── entrypoint.sh             # Migrations + start
+│   └── ollama-entrypoint.sh      # Auto-pull embeddings
+│
+├── docker-compose.yml            # Dev: postgres only
+└── docker-compose.prod.yml       # Prod: full stack
+```
 
 ## Prerequisites
 
-- **Node.js**: 20.0.0 or higher
-- **pnpm**: 9.0.0 or higher
-- **Docker**: For PostgreSQL and production deployment
-- **Ollama**: Latest version (for local development)
-- **Git**: For version control
+- Node.js 20+
+- pnpm 9+
+- Docker
+- Ollama (local dev)
 
 ## Quick Start (Development)
 
-### 1. Install Dependencies
-
 ```bash
-# Install pnpm globally if not already installed
-npm install -g pnpm
-
-# Install all workspace dependencies
+# Install dependencies
 pnpm install
-```
 
-### 2. Configure Environment
-
-```bash
-# Copy environment template
-cp .env.dev.example .env
-
-# Edit .env with your configuration
-```
-
-### 3. Start PostgreSQL
-
-```bash
-# Start PostgreSQL with pgvector
+# Start PostgreSQL
 docker-compose up -d
 
-# Verify database is running
-docker ps
-```
-
-### 4. Install Ollama and Pull Models
-
-```bash
-# Install Ollama (macOS)
+# Install Ollama + pull models
 brew install ollama
-
-# Or download from https://ollama.ai
-
-# Start Ollama server
 ollama serve
+pnpm ollama:pull  # llama3.1:8b + nomic-embed-text
 
-# Pull required models (in another terminal)
-pnpm ollama:pull
-# This runs: ollama pull llama3.1:8b && ollama pull nomic-embed-text
-```
+# Setup database
+pnpm db:generate && pnpm db:migrate
 
-### 5. Set Up Database
-
-```bash
-# Generate database schema
-pnpm db:generate
-
-# Run migrations
-pnpm db:migrate
-
-# Optional: Open Drizzle Studio to view database
-pnpm db:studio
-```
-
-### 6. Start Development Servers
-
-```bash
-# Start all services (frontend, backend, MCP server)
+# Start all services
 pnpm dev
-
-# Or start individually:
-pnpm dev:frontend  # http://localhost:3000
-pnpm dev:backend   # http://localhost:3001
-pnpm dev:mcp       # stdio transport
+# Frontend: http://localhost:3000
+# Backend:  http://localhost:3001
 ```
 
-## Production Deployment (Docker)
-
-Full containerized deployment with nginx reverse proxy.
-
-### 1. Configure Environment
+## Production Deployment
 
 ```bash
+# Configure environment
 cp .env.prod.example .env.prod
+# Edit: POSTGRES_PASSWORD, OLLAMA_API_KEY, OLLAMA_CLOUD_URL
 
-# Edit .env.prod with production values:
-# - POSTGRES_PASSWORD: Strong database password
-# - OLLAMA_API_KEY: API key for cloud models
-# - OLLAMA_CLOUD_URL: https://ollama.com (for cloud models)
-```
-
-### 2. Build and Start All Services
-
-```bash
-# Build and start all containers
+# Build and start
 docker compose -f docker-compose.prod.yml up -d --build
 
-# Check container health
-docker ps
-
-# View logs
-docker compose -f docker-compose.prod.yml logs -f
+# Access: http://localhost (nginx serves frontend, proxies /api)
 ```
 
-### 3. Run Database Migrations
-
-Migrations run automatically on container start via entrypoint script.
-
-### 4. Access Application
-
-- **Frontend**: http://localhost (port 80)
-- **API**: http://localhost/api
-
-### Architecture
+### Production Architecture
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│    Frontend     │────▶│     Backend     │────▶│   PostgreSQL    │
-│   (nginx:80)    │     │   (node:3001)   │     │  (pgvector:5432)│
-└─────────────────┘     │  + MCP Server   │     └─────────────────┘
-                        └────────┬────────┘
-                                 │
-              ┌──────────────────┴──────────────────┐
-              │                                     │
-     ┌────────▼────────┐                   ┌────────▼────────┐
-     │  Ollama (local) │                   │  Ollama (cloud) │
-     │  Embeddings     │                   │  LLM Model      │
-     │ :11434 container│                   │ ollama.com      │
-     └─────────────────┘                   └─────────────────┘
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   nginx:80  │────▶│ backend:3001│────▶│postgres:5432│
+│  (frontend) │     │ + MCP server│     │  (pgvector) │
+└─────────────┘     └──────┬──────┘     └─────────────┘
+                           │
+          ┌────────────────┴────────────────┐
+          │                                 │
+   ┌──────▼──────┐                  ┌───────▼───────┐
+   │ ollama:11434│                  │ Ollama Cloud  │
+   │ (embeddings)│                  │ (LLM model)   │
+   └─────────────┘                  └───────────────┘
 ```
 
 ## LLM Configuration
 
-### Option 1: Local Models (Development)
-
-Use local Ollama for both LLM and embeddings:
+### Local (Development)
 
 ```env
 OLLAMA_BASE_URL=http://localhost:11434
@@ -186,131 +139,72 @@ OLLAMA_MODEL=llama3.1:8b
 OLLAMA_EMBEDDING_MODEL=nomic-embed-text
 ```
 
-### Option 2: Cloud LLM + Local Embeddings (Production)
-
-Use cloud Ollama for LLM, local container for embeddings:
+### Cloud + Local Embeddings (Production)
 
 ```env
-# Cloud LLM (requires API key)
 OLLAMA_CLOUD_URL=https://ollama.com
 OLLAMA_MODEL=gpt-oss:120b-cloud
-OLLAMA_API_KEY=your-api-key
+OLLAMA_API_KEY=your-key
 
-# Local embeddings (containerized)
 OLLAMA_BASE_URL=http://ollama:11434
 OLLAMA_EMBEDDING_MODEL=nomic-embed-text
 ```
 
-### Option 3: Fully Local (Production)
-
-Use local Ollama for everything (requires GPU):
-
-```env
-OLLAMA_BASE_URL=http://ollama:11434
-OLLAMA_MODEL=llama3.1:8b
-OLLAMA_EMBEDDING_MODEL=nomic-embed-text
-# No OLLAMA_CLOUD_URL or OLLAMA_API_KEY needed
-```
-
-## Project Structure
+## Multi-Agent Flow
 
 ```
-islamic-finance-assistant/
-├── frontend/              # React + Vite frontend
-│   ├── app/
-│   │   ├── routes/       # Page routes
-│   │   ├── components/   # UI components
-│   │   ├── machines/     # XState state machines
-│   │   └── lib/          # Utilities
-│   └── package.json
-├── backend/              # Hono.js backend
-│   ├── agents/          # Multi-agent system
-│   ├── db/              # Database schema & config
-│   ├── services/        # Business logic
-│   ├── routes/          # API routes
-│   └── server.ts
-├── mcp-server/          # MCP calculator service
-│   └── src/
-│       └── index.ts
-├── docker/              # Docker configuration
-│   ├── frontend.Dockerfile
-│   ├── backend.Dockerfile
-│   ├── nginx.conf
-│   ├── entrypoint.sh
-│   └── ollama-entrypoint.sh
-├── docs/                # Documentation
-│   ├── PRD.md
-│   └── TRD.md
-├── docker-compose.yml        # Dev: PostgreSQL only
-├── docker-compose.prod.yml   # Prod: Full stack
-└── package.json              # Root workspace config
+User Query
+    │
+    ▼
+┌─────────────────┐
+│  Routing Agent  │  → Classifies: principles|products|compliance|
+│  (temp: 0.1)    │     comparison|calculation|general
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    ▼         ▼
+┌────────┐ ┌───────────┐
+│Knowledge│ │Calculation│
+│ Agent  │ │  Agent    │
+│ (RAG)  │ │  (MCP)    │
+└────┬───┘ └─────┬─────┘
+     │           │
+     └─────┬─────┘
+           ▼
+    ┌────────────┐
+    │ Compliance │  → COMPLIANT | FLAGGED
+    │   Agent    │
+    └────────────┘
 ```
 
-## Architecture
+## Key Configurations
 
-### Multi-Agent System
+| Config          | Value           | Location                                                |
+| --------------- | --------------- | ------------------------------------------------------- |
+| Embedding dims  | 768             | `backend/db/schema.ts:27`                               |
+| Chunk size      | 800 tokens      | `backend/services/chunking-service.ts:35`               |
+| Chunk overlap   | 100 tokens      | `backend/services/chunking-service.ts:36`               |
+| Retrieval limit | 5 → rerank to 3 | `KNOWLEDGE_RETRIEVAL_LIMIT`, `KNOWLEDGE_RERANKED_LIMIT` |
+| Session timeout | 30 min          | `backend/services/session-store.ts:38`                  |
+| Max file size   | 10 MB           | `backend/services/document-processor.ts:32`             |
 
-1. **Routing Agent**: Classifies user queries into categories
-2. **Knowledge Agent**: Retrieves information via RAG
-3. **Calculation Agent**: Handles profit-sharing calculations via MCP
-4. **Compliance Agent**: Validates Shariah alignment
+## Scripts
 
-### Data Flow
-
+```bash
+pnpm dev              # Start all services
+pnpm build            # Production build
+pnpm db:generate      # Generate migrations
+pnpm db:migrate       # Run migrations
+pnpm db:studio        # Drizzle Studio
+pnpm ollama:pull      # Pull required models
+pnpm seed             # Seed documents
+pnpm test             # Run tests
 ```
-User Query → Routing Agent → [Knowledge/Calculation Agent] → Compliance Agent → Response
-                ↓
-         Vector Search (for knowledge queries)
-         MCP Server (for calculations)
-```
-
-## Adding Documents
-
-1. Navigate to Admin Dashboard at http://localhost:3000/admin
-2. Click "Upload Document"
-3. Select PDF/DOCX/TXT/MD file
-4. Add title, description, and category
-5. Click Upload
-6. Document will be processed, chunked, embedded, and indexed
-
-## SSL/HTTPS
-
-For production HTTPS, use one of:
-
-- Cloudflare Tunnel
-- nginx-proxy with Let's Encrypt
-- External load balancer (AWS ALB, etc.)
-
-## Learning Objectives
-
-This project demonstrates:
-
-- ✅ Vector embeddings and semantic search
-- ✅ RAG (Retrieval-Augmented Generation)
-- ✅ Multi-agent AI systems
-- ✅ Model Context Protocol (MCP)
-- ✅ Streaming LLM responses
-- ✅ Open source LLM deployment (Ollama)
-- ✅ TypeScript monorepo management
-- ✅ Modern React patterns (XState, TanStack Query)
-- ✅ PostgreSQL with pgvector
-
-## Contributing
-
-This is a personal learning project. Feel free to fork and experiment!
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](./LICENSE) - Danny Dwi Cahyono
 
 ## Author
 
 Danny - AI Engineer
-
-## References
-
-- [PRD.md](./docs/PRD.md) - Product Requirements
-- [TRD.md](./docs/TRD.md) - Technical Requirements
-- [Ollama](https://ollama.ai)
-- [pgvector](https://github.com/pgvector/pgvector)
-- [Model Context Protocol](https://modelcontextprotocol.io)
