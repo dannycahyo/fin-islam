@@ -17,6 +17,7 @@ export class CalculationAgentError extends Error {
 export interface CalculationAgentConfig {
   baseUrl?: string;
   model?: string;
+  apiKey?: string;
   maxRetries?: number;
   temperature?: number;
 }
@@ -101,16 +102,26 @@ export class CalculationAgent {
 
   constructor(config: CalculationAgentConfig = {}) {
     const {
-      baseUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
+      baseUrl = process.env.OLLAMA_CLOUD_URL ||
+        process.env.OLLAMA_BASE_URL ||
+        'http://localhost:11434',
       model = process.env.OLLAMA_MODEL || 'llama3.1:8b',
+      apiKey = process.env.OLLAMA_API_KEY,
       maxRetries = 3,
       temperature = 0.1,
     } = config;
+
+    let headers: Headers | undefined;
+    if (apiKey) {
+      headers = new Headers();
+      headers.append('Authorization', `Bearer ${apiKey}`);
+    }
 
     this.llmClient = new ChatOllama({
       baseUrl,
       model,
       temperature,
+      headers,
     });
     this.mcpClient = MCPClient.getInstance();
     this.maxRetries = maxRetries;

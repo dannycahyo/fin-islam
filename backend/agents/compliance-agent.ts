@@ -21,17 +21,27 @@ export class ComplianceAgent {
 
   constructor(config: ComplianceAgentConfig = {}) {
     const {
-      baseUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
+      baseUrl = process.env.OLLAMA_CLOUD_URL ||
+        process.env.OLLAMA_BASE_URL ||
+        'http://localhost:11434',
       model = process.env.OLLAMA_MODEL || 'llama3.1:8b',
+      apiKey = process.env.OLLAMA_API_KEY,
       maxRetries = 3,
       temperature = 0.1,
       confidenceThreshold = 0.7,
     } = config;
 
+    let headers: Headers | undefined;
+    if (apiKey) {
+      headers = new Headers();
+      headers.append('Authorization', `Bearer ${apiKey}`);
+    }
+
     this.client = new ChatOllama({
       baseUrl,
       model,
       temperature,
+      headers,
     });
 
     this.maxRetries = maxRetries;

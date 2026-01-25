@@ -18,6 +18,7 @@ export class KnowledgeAgentError extends Error {
 export interface KnowledgeAgentConfig {
   baseUrl?: string;
   model?: string;
+  apiKey?: string;
   maxRetries?: number;
   temperature?: number;
   retrievalLimit?: number;
@@ -39,8 +40,11 @@ export class KnowledgeAgent {
     config: KnowledgeAgentConfig = {}
   ) {
     const {
-      baseUrl = process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
+      baseUrl = process.env.OLLAMA_CLOUD_URL ||
+        process.env.OLLAMA_BASE_URL ||
+        'http://localhost:11434',
       model = process.env.KNOWLEDGE_AGENT_MODEL || process.env.OLLAMA_MODEL || 'llama3.1:8b',
+      apiKey = process.env.OLLAMA_API_KEY,
       maxRetries = 3,
       temperature = Number(process.env.KNOWLEDGE_AGENT_TEMPERATURE) || 0.7,
       retrievalLimit = Number(process.env.KNOWLEDGE_RETRIEVAL_LIMIT) || 5,
@@ -48,10 +52,17 @@ export class KnowledgeAgent {
       confidenceThreshold = Number(process.env.KNOWLEDGE_CONFIDENCE_THRESHOLD) || 0.5,
     } = config;
 
+    let headers: Headers | undefined;
+    if (apiKey) {
+      headers = new Headers();
+      headers.append('Authorization', `Bearer ${apiKey}`);
+    }
+
     this.client = new ChatOllama({
       baseUrl,
       model,
       temperature,
+      headers,
     });
 
     this.maxRetries = maxRetries;
